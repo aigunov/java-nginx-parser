@@ -5,6 +5,7 @@ import backend.academy.parser.logic.cli.FormatConverter;
 import backend.academy.parser.logic.cli.LocalDateTimeConverter;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -47,5 +48,7 @@ public class Filter {
         description = "По какому полю сортировка",
         required = false)
     private String filterField;
+
+    private Path domenPath;
 }
 
