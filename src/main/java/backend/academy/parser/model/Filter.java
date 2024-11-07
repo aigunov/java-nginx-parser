@@ -24,7 +24,7 @@ public class Filter {
     @Parameter(names = {"-p", "--path"},
         description = "Путь к файлу или URL",
         required = true, variableArity = true)
-    private List<String> path;
+    private List<String> paths;
     @Parameter(names = {"-e", "--from"},
         description = "Дата конца",
         required = false,

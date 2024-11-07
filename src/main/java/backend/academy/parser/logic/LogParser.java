@@ -3,7 +3,6 @@ package backend.academy.parser.logic;
 import backend.academy.parser.model.Log;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Locale;
 
 public class LogParser {

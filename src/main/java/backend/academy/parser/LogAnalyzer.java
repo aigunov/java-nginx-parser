@@ -17,9 +17,9 @@ public class LogAnalyzer {
 
     public void analyze(String[] args, String currentDirectory) {
         var filters = acceptCommand(args, currentDirectory);
-        handler = determinateTypeOfFiles(filters.path());
+        handler = determinateTypeOfFiles(filters.paths());
         try {
-            handler.handleFile(filters);
+            handler.handleFiles(filters);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -35,7 +35,7 @@ public class LogAnalyzer {
         try {
             commander.parse(args);
             // Получаем объект filter с аргументами
-            System.out.println("Path: " + filter.path());
+            System.out.println("Path: " + filter.paths());
             System.out.println("From: " + filter.from());
             System.out.println("To: " + filter.to());
             System.out.println("Format: " + filter.format());

@@ -21,9 +21,9 @@ import java.util.stream.Stream;
 public class PathFileHandler implements FileHandler {
     private final LogParser logParser = new LogParser();
     @Override
-    public List<Log> handleFile(Filter filter) throws IOException {
+    public List<Log> handleFiles(Filter filter) throws IOException {
         List<Path> paths = new ArrayList<>();
-        for (var path : filter.path()) {
+        for (var path : filter.paths()) {
             paths.addAll(getPathsToFile(path, filter.domenPath()));
         }
 
