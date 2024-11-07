@@ -3,7 +3,10 @@ package backend.academy.parser.logic;
 import backend.academy.parser.logic.interfaces.FileHandler;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Log;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -32,11 +35,13 @@ public class URLFileHandler implements FileHandler {
             .build();
         try {
             log.info("Послан запрос: {} {}", request.method(), request.uri());
-            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            var response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
             if (!(response.statusCode() == 200)) {
                 throw new IOException("Файл по URL: " + url + " недоступен.");
+
             }
-            return response.body().lines();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.body()));
+            return  reader.lines();
         } catch (IOException | InterruptedException e) {
             log.error("Произошла ошибка чтения файла: {}", e.getMessage());
             return Stream.empty();
