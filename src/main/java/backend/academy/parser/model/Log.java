@@ -1,15 +1,17 @@
 package backend.academy.parser.model;
 
+import lombok.Builder;
 import java.time.LocalDateTime;
 
-public class Log {
-    private String ip;
-    private String user;
-    private LocalDateTime time;
-    private String request;
-    private int status;
-    private int bodyByteSent;
-    private String referer;
-    private String userAgent;
-
+@Builder(toBuilder = true)
+public record Log(
+    String ip,
+    String user,
+    LocalDateTime time,
+    String request,
+    int status,
+    int bodyByteSent,
+    String referer,
+    String userAgent
+) {
 }
