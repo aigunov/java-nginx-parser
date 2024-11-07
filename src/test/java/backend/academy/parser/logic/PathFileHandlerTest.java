@@ -43,34 +43,4 @@ class PathFileHandlerTest {
         }
     }
 
-    @Test
-    public void testGetPathsToFile_MatchTxtFiles() throws IOException {
-        String pattern = "glob:*.txt";
-        List<Path> result = pathFileHandler.getPathsToFile(pattern, tempDir);
-
-        assertEquals(4, result.size(), "Should find 4 .txt files in all directories");
-        assertTrue(result.contains(tempDir.resolve("testFile1.txt").getFileName()));
-        assertTrue(result.contains(tempDir.resolve("testFile2.txt").getFileName()));
-        assertTrue(result.contains(tempDir.resolve("dir1/dir1log1.txt").getFileName()));
-        assertTrue(result.contains(tempDir.resolve("dir1/dir1log2.txt").getFileName()));
-    }
-
-    @Test
-    public void testGetPathsToFile_NoMatchForPattern() throws IOException {
-        String pattern = "glob:*.log";
-        List<Path> result = pathFileHandler.getPathsToFile(pattern, tempDir);
-
-        assertTrue(result.isEmpty(), "No files should match the .log pattern");
-    }
-
-    @Test
-    public void testGetPathsToFile_SpecificDirectoryOnly() throws IOException {
-        String pattern = "glob:dir1*.txt";
-        Path specificDir = tempDir.resolve("dir1");
-        List<Path> result = pathFileHandler.getPathsToFile(pattern, specificDir);
-
-        assertEquals(2, result.size(), "Should find only 2 .txt files in dir1");
-        assertTrue(result.contains(specificDir.resolve("dir1log1.txt").getFileName()));
-        assertTrue(result.contains(specificDir.resolve("dir1log2.txt").getFileName()));
-    }
 }

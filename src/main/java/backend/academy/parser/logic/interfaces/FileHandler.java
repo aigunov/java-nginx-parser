@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface FileHandler {
 
-    List<Log> handleFiles(Filter filter) throws IOException;
+    List<Log> handleFiles(Filter filter) ;
 }

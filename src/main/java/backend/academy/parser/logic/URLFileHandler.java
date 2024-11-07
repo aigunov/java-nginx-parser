@@ -26,11 +26,12 @@ public class URLFileHandler implements FileHandler {
             .toList();
     }
 
-    public Stream<String> readFileLines(String url) {
+    private Stream<String> readFileLines(String url) {
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .build();
         try {
+            log.info("Послан запрос: {} {}", request.method(), request.uri());
             var response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (!(response.statusCode() == 200)) {
                 throw new IOException("Файл по URL: " + url + " недоступен.");
@@ -42,9 +43,4 @@ public class URLFileHandler implements FileHandler {
         }
     }
 
-    public static void main(String[] args) {
-        URLFileHandler filer = new URLFileHandler();
-        var response = filer.readFileLines("https://raw.githubusercontent.com/elastic/examples/master/Common%20Data%20Formats/nginx_logs/nginx_logs");
-        response.limit(5).forEach(System.out::println);
-    }
 }

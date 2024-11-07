@@ -16,13 +16,13 @@ public class ArgumentsValidator implements IParametersValidator {
         if (to.isAfter(from)) {
             throw new ParameterException("Неверно заданы фильтры для начала и конца даты");
         }
-        var filterField = (String) map.getOrDefault("--filter-field", "none");
+        var filterField = map.get("--filter-field") == null ? "none" : map.get("--filter-field").toString();
         var fields = Arrays.stream(Log.class.getDeclaredFields()).map(Field::getName).toList();
         if (!filterField.equals("none") && !fields.contains(filterField)) {
             throw new ParameterException("Неверно заданы параметры для фильтрации");
         }
 
-        var filterValue = (String) map.getOrDefault("--filter-value", "none");
+        var filterValue = map.get("--filter-value") == null ? "none" : map.get("--filter-value").toString();
         // если задано поле для сортировки, но не задано значения для сортировки по полю и наоборот
         if ((!filterField.equals("none") && !filterValue.equals("none")) ||
             (filterField.equals("none") && !filterValue.equals("none"))) {
