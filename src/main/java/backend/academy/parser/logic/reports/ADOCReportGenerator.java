@@ -4,7 +4,7 @@ import backend.academy.parser.logic.interfaces.ReportGenerator;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Statistic;
 import java.io.PrintStream;
-import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public class ADOCReportGenerator implements ReportGenerator {
@@ -24,8 +24,10 @@ public class ADOCReportGenerator implements ReportGenerator {
         report.append("|===\n");
         report.append("| Метрика             | Значение\n");
         report.append("| Файл(-ы)            | `").append(paths).append("`\n");
-        report.append("| Начальная дата      | ").append(filter.from() != null ? filter.from() : "-").append("\n");
-        report.append("| Конечная дата       | ").append(filter.to() != null ? filter.to() : "-").append("\n");
+        report.append("| Начальная дата      | ")
+            .append(filter.from() != null && filter.from() != LocalDateTime.MIN ? filter.from() : "-").append("\n");
+        report.append("| Конечная дата       | ")
+            .append(filter.to() != null && filter.to() != LocalDateTime.MAX ? filter.to() : "-").append("\n");
         report.append("| Количество запросов | ").append(String.format("%,d", statistic.requestCount())).append("\n");
         report.append("| Средний размер ответа | ").append(statistic.avg()).append("b\n");
         report.append("| 95-й перцентиль размера ответа | ").append(statistic.percent95()).append("b\n");

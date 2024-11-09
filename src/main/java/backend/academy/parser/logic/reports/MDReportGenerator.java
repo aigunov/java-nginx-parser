@@ -2,11 +2,9 @@ package backend.academy.parser.logic.reports;
 
 import backend.academy.parser.logic.interfaces.ReportGenerator;
 import backend.academy.parser.model.Filter;
-import backend.academy.parser.model.HttpStatus;
 import backend.academy.parser.model.Statistic;
 import java.io.PrintStream;
-import java.nio.file.Path;
-import java.util.Map;
+import java.time.LocalDateTime;
 
 public class MDReportGenerator implements ReportGenerator {
     @Override
@@ -19,9 +17,16 @@ public class MDReportGenerator implements ReportGenerator {
         report.append("|       Метрика        |     Значение |\n");
         report.append("|----------------------|-------------:|\n");
         report.append("|       Файл(-ы)       | `").append(paths).append("` |\n");
-        report.append("|    Начальная дата    | ").append(filter.from() != null ? filter.from() : "-").append(" |\n");
-        report.append("|     Конечная дата    | ").append(filter.to() != null ? filter.to() : "-").append(" |\n");
-        report.append("|  Количество запросов | ").append(String.format("%,d", statistic.requestCount())).append(" |\n");
+
+        report.append("|    Начальная дата    | ")
+            .append(filter.from() != null && filter.from() != LocalDateTime.MIN ? filter.from() : "-").append(" |\n");
+
+        report.append("|     Конечная дата    | ")
+            .append(filter.to() != null && filter.to() != LocalDateTime.MAX ? filter.to() : "-").append(" |\n");
+
+        report.append("|  Количество запросов | ").append(String.format("%,d", statistic.requestCount()))
+            .append(" |\n");
+
         report.append("| Средний размер ответа| ").append(statistic.avg()).append("b |\n");
         report.append("|   95p размера ответа | ").append(statistic.percent95()).append("b |\n\n");
 

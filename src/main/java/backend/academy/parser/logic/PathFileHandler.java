@@ -14,11 +14,9 @@ import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PathFileHandler implements FileHandler {
     private final LogParser logParser = new LogParser();
     @Override
-    public Set<Log> handleFiles(Filter filter) {
+    public List<Log> handleFiles(Filter filter) {
         List<Path> paths = new ArrayList<>();
         for (var path : filter.paths()) {
             paths.addAll(getPathsToFile(path, filter.domenPath()));
@@ -34,7 +32,7 @@ public class PathFileHandler implements FileHandler {
         return paths.stream()
             .flatMap(this::parseFileLines)
             .map(logParser::parseLine)
-            .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Log::time))));
+            .toList();
     }
 
     private Stream<String> parseFileLines(Path path) {
@@ -46,8 +44,8 @@ public class PathFileHandler implements FileHandler {
         }
     }
 
-    private List<Path> getPathsToFile(final String pattern, final Path rootDir) {
-        List<Path> matchesList = new ArrayList<>();
+    private Set<Path> getPathsToFile(final String pattern, final Path rootDir) {
+        Set<Path> matchesList = new TreeSet<>();
         FileVisitor<Path> matchesVisitor = new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attribs) {

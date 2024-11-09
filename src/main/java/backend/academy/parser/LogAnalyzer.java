@@ -7,11 +7,13 @@ import backend.academy.parser.logic.interfaces.FileHandler;
 import backend.academy.parser.logic.reports.ADOCReportGenerator;
 import backend.academy.parser.logic.reports.MDReportGenerator;
 import backend.academy.parser.model.Filter;
+import backend.academy.parser.model.Log;
 import backend.academy.parser.model.ReportFormat;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import java.io.PrintStream;
 import java.nio.file.Path;
+import java.util.List;
 
 public class LogAnalyzer {
     private StatisticsCounter counter;
@@ -20,7 +22,7 @@ public class LogAnalyzer {
     public void analyze(String[] args, String currentDirectory) {
         var filters = acceptCommand(args, currentDirectory);
         var handler = determinateTypeOfFiles(filters.paths().getFirst());
-        var logs = handler.handleFiles(filters);
+        List<Log> logs = handler.handleFiles(filters);
         counter = new StatisticsCounter(filters, logs);
         var stats = counter.countStatistic();
         System.out.println(stats);

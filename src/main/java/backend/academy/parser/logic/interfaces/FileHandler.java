@@ -8,5 +8,5 @@ import java.util.Set;
 
 public interface FileHandler {
 
-    Set<Log> handleFiles(Filter filter) ;
+    List<Log> handleFiles(Filter filter) ;
 }

@@ -24,12 +24,12 @@ public class URLFileHandler implements FileHandler {
     private final HttpClient client = HttpClient.newHttpClient();
 
     @Override
-    public Set<Log> handleFiles(Filter filter) {
+    public List<Log> handleFiles(Filter filter) {
         return filter.paths()
             .stream()
             .flatMap(this::readFileLines)
             .map(logParser::parseLine)
-            .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Log::time))));
+            .toList();
     }
 
     private Stream<String> readFileLines(String url) {

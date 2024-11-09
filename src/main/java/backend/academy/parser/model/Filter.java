@@ -25,25 +25,30 @@ public class Filter {
         description = "Путь к файлу или URL",
         required = true, variableArity = true)
     private List<String> paths;
+
     @Parameter(names = {"-e", "--from"},
         description = "Дата конца",
         required = false,
         converter = LocalDateTimeConverter.class)
-    private LocalDateTime from;
+    private LocalDateTime from = LocalDateTime.MIN;
+
     @Parameter(names = {"-s", "--to"},
         description = "Дата начала",
         required = false,
         converter = LocalDateTimeConverter.class)
-    private LocalDateTime to;
+    private LocalDateTime to = LocalDateTime.MAX;
+
     @Parameter(names = {"-f", "--format"},
         description = "Формат вывода отчета(MARKDOWN or ADOC)",
         required = false,
         converter = FormatConverter.class)
     private ReportFormat format = ReportFormat.MARKDOWN;
+
     @Parameter(names = {"-fv", "--filter-value"},
         description = "Сортировка по значению по переданном полю",
         required = false)
     private String filterValue;
+
     @Parameter(names = {"-ff", "--filter-field"},
         description = "По какому полю сортировка",
         required = false)
