@@ -3,6 +3,7 @@ package backend.academy.parser.logic;
 import backend.academy.parser.model.Log;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class LogParser {
@@ -16,6 +17,7 @@ public class LogParser {
         String remoteUser = firstPart[2];
         String timeLocalStr = firstPart[3] + " " + firstPart[4];
         String request = parts[1];
+        String resource = extractResourceName(request);
         int status = Integer.parseInt(statusAndBytes[0]);
         int bodyBytesSent = Integer.parseInt(statusAndBytes[1]);
         String httpReferer = parts[3];
@@ -29,6 +31,7 @@ public class LogParser {
             .user(remoteUser)
             .time(timeLocal)
             .request(request)
+            .resource(resource)
             .status(status)
             .bodyByteSent(bodyBytesSent)
             .referer(httpReferer)
@@ -36,4 +39,16 @@ public class LogParser {
             .build();
     }
 
+    public static String extractResourceName(String requestLine) {
+        if (requestLine == null || requestLine.isEmpty()) {
+            return null; // Обработка пустой строки
+        }
+        String[] parts = requestLine.split(" ")[1].split("/");
+
+        if (parts.length < 3) {
+            return null; // Некорректный формат строки
+        }
+
+        return parts[parts.length - 1];
+    }
 }

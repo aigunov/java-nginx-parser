@@ -9,6 +9,7 @@ public record Log(
     String user,
     LocalDateTime time,
     String request,
+    String resource,
     int status,
     int bodyByteSent,
     String referer,

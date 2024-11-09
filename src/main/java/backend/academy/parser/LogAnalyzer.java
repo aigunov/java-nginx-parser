@@ -1,6 +1,7 @@
 package backend.academy.parser;
 
 import backend.academy.parser.logic.PathFileHandler;
+import backend.academy.parser.logic.StatisticsCounter;
 import backend.academy.parser.logic.URLFileHandler;
 import backend.academy.parser.logic.interfaces.FileHandler;
 import backend.academy.parser.model.Filter;
@@ -11,12 +12,14 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class LogAnalyzer {
-
+    private StatisticsCounter counter;
     public void analyze(String[] args, String currentDirectory) {
         var filters = acceptCommand(args, currentDirectory);
         var handler = determinateTypeOfFiles(filters.paths().getFirst());
         var logs = handler.handleFiles(filters);
-        logs.stream().limit(5).forEach(System.out::println);
+        counter = new StatisticsCounter(filters, logs);
+        counter.countStatistic();
+
     }
 
     public Filter acceptCommand(String[] args, String currentDirectory) {

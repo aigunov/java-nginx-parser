@@ -14,7 +14,10 @@ import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -23,16 +26,15 @@ import lombok.extern.slf4j.Slf4j;
 public class PathFileHandler implements FileHandler {
     private final LogParser logParser = new LogParser();
     @Override
-    public List<Log> handleFiles(Filter filter) {
+    public Set<Log> handleFiles(Filter filter) {
         List<Path> paths = new ArrayList<>();
         for (var path : filter.paths()) {
             paths.addAll(getPathsToFile(path, filter.domenPath()));
         }
-
         return paths.stream()
             .flatMap(this::parseFileLines)
             .map(logParser::parseLine)
-            .collect(Collectors.toList());
+            .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Log::time))));
     }
 
     private Stream<String> parseFileLines(Path path) {

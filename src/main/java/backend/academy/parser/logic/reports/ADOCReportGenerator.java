@@ -1,4 +1,4 @@
-package backend.academy.parser.logic;
+package backend.academy.parser.logic.reports;
 
 import backend.academy.parser.logic.interfaces.ReportGenerator;
 import backend.academy.parser.model.Statistic;

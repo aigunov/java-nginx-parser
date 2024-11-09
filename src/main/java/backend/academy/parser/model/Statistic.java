@@ -1,4 +1,12 @@
 package backend.academy.parser.model;
 
-public class Statistic {
+import java.util.Map;
+import lombok.Builder;
+
+@Builder(toBuilder = true)
+public record Statistic(int requestCount,
+                        Map<Integer, Integer> statusCodes,
+                        Map<String, Integer> resources,
+                        double avg,
+                        double percent95) {
 }
