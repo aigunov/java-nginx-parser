@@ -8,5 +8,7 @@ public record Statistic(int requestCount,
                         Map<HttpStatus, Integer> statusCodes,
                         Map<String, Integer> resources,
                         double avg,
-                        double percent95) {
+                        double percent95,
+                        double percent90,
+                        double percent99) {
 }

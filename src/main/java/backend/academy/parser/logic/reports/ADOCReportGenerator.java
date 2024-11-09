@@ -30,7 +30,9 @@ public class ADOCReportGenerator implements ReportGenerator {
             .append(filter.to() != null && filter.to() != LocalDateTime.MAX ? filter.to() : "-").append("\n");
         report.append("| Количество запросов | ").append(String.format("%,d", statistic.requestCount())).append("\n");
         report.append("| Средний размер ответа | ").append(statistic.avg()).append("b\n");
-        report.append("| 95-й перцентиль размера ответа | ").append(statistic.percent95()).append("b\n");
+        report.append("|   99p размера ответа | ").append(statistic.percent99()).append("b |\n\n");
+        report.append("|   95p размера ответа | ").append(statistic.percent95()).append("b |\n\n");
+        report.append("|   90p размера ответа | ").append(statistic.percent90()).append("b |\n\n");
         report.append("|===\n\n");
 
         // Запрашиваемые ресурсы

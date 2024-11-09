@@ -8,6 +8,7 @@ import backend.academy.parser.model.Statistic;
 import com.google.common.math.Quantiles;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,8 +74,11 @@ public class StatisticsCounter {
     }
 
     private Statistic getStatistic(){
+        Collections.sort(bodyByteSentList);
         var avg = bodyByteSentSummary / countOfRequests;
-        double percent = Quantiles.percentiles().index(95).compute(bodyByteSentList.stream().sorted().toList());
+        double percent95 = Quantiles.percentiles().index(95).compute(bodyByteSentList);
+        double percent90 = Quantiles.percentiles().index(90).compute(bodyByteSentList);
+        double percent99 = Quantiles.percentiles().index(99).compute(bodyByteSentList);
 
         var topStatusCodes = codes.entrySet().stream()
             .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed()) // Сортируем по значению в обратном порядке
@@ -97,7 +101,9 @@ public class StatisticsCounter {
         return Statistic.builder()
             .avg(avg)
             .requestCount(countOfRequests)
-            .percent95(percent)
+            .percent99(percent99)
+            .percent95(percent95)
+            .percent90(percent90)
             .resources(topResources)
             .statusCodes(topStatusCodes)
             .build();

@@ -28,7 +28,9 @@ public class MDReportGenerator implements ReportGenerator {
             .append(" |\n");
 
         report.append("| Средний размер ответа| ").append(statistic.avg()).append("b |\n");
+        report.append("|   99p размера ответа | ").append(statistic.percent99()).append("b |\n\n");
         report.append("|   95p размера ответа | ").append(statistic.percent95()).append("b |\n\n");
+        report.append("|   90p размера ответа | ").append(statistic.percent90()).append("b |\n\n");
 
         // Запрашиваемые ресурсы
         report.append("#### Запрашиваемые ресурсы\n\n");
