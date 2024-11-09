@@ -12,7 +12,7 @@ public class MDReportGenerator implements ReportGenerator {
     @Override
     public void generateReport(final Filter filter, final Statistic statistic, PrintStream out) {
         StringBuilder report = new StringBuilder();
-        var paths = filter.paths().stream().map(Path::of).map(Path::getFileName).toList();
+        var paths = filter.paths().stream().map(path -> path.split("/")[path.split("/").length - 1]).toList();
 
         // Общая информация
         report.append("#### Общая информация\n\n");

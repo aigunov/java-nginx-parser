@@ -11,7 +11,7 @@ public class ADOCReportGenerator implements ReportGenerator {
     @Override
     public void generateReport(final Filter filter, final Statistic statistic, final PrintStream out) {
         StringBuilder report = new StringBuilder();
-        var paths = filter.paths().stream().map(Path::of).map(Path::getFileName).toList();
+        var paths = filter.paths().stream().map(path -> path.split("/")[path.split("/").length - 1]).toList();
 
         // Заголовок отчета
         report.append("= Отчет по HTTP-запросам\n");
