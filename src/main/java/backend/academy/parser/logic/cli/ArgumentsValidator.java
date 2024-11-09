@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class ArgumentsValidator implements IParametersValidator {
+    //TODO: поменять проверки переменных, там другой список названий переменных
     @Override
     public void validate(Map<String, Object> map) throws ParameterException {
         var to = (LocalDateTime) map.getOrDefault("to", LocalDateTime.MIN);

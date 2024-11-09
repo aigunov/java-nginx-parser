@@ -4,15 +4,19 @@ import backend.academy.parser.logic.PathFileHandler;
 import backend.academy.parser.logic.StatisticsCounter;
 import backend.academy.parser.logic.URLFileHandler;
 import backend.academy.parser.logic.interfaces.FileHandler;
+import backend.academy.parser.logic.reports.ADOCReportGenerator;
+import backend.academy.parser.logic.reports.MDReportGenerator;
 import backend.academy.parser.model.Filter;
+import backend.academy.parser.model.ReportFormat;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import java.net.URI;
+import java.io.PrintStream;
 import java.nio.file.Path;
-import java.util.List;
 
 public class LogAnalyzer {
     private StatisticsCounter counter;
+    private final PrintStream out = new PrintStream(System.out);
+
     public void analyze(String[] args, String currentDirectory) {
         var filters = acceptCommand(args, currentDirectory);
         var handler = determinateTypeOfFiles(filters.paths().getFirst());
@@ -20,6 +24,10 @@ public class LogAnalyzer {
         counter = new StatisticsCounter(filters, logs);
         var stats = counter.countStatistic();
         System.out.println(stats);
+        var reportGenerator =
+            filters.format() == ReportFormat.MARKDOWN || filters.format() == null ?
+                new MDReportGenerator() : new ADOCReportGenerator();
+        reportGenerator.generateReport(filters, stats, out);
     }
 
     public Filter acceptCommand(String[] args, String currentDirectory) {

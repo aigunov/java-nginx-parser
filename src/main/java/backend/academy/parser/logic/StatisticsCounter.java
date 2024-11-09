@@ -41,9 +41,10 @@ public class StatisticsCounter {
         return getStatistic();
     }
 
+    //TODO: исправить серчинг по полям чтобы можно было использовать GLOB
     private boolean filterLog(final Log logg) {
         boolean answer = logg.time().isAfter(filter.from()) && logg.time().isBefore(filter.to());
-        if(!filter.filterField().equals("none")){
+        if(filter.filterField() != null){
             try {
                 Field filterField = logg.getClass().getDeclaredField(filter.filterField());
                 filterField.setAccessible(true);
@@ -57,7 +58,7 @@ public class StatisticsCounter {
                 throw new RuntimeException(e);
             }
         }
-        return false;
+        return answer;
     }
 
     private void calculateDataInLog(final Log log) {
