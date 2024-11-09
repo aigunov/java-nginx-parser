@@ -76,6 +76,7 @@ public enum HttpStatus {
     NOT_EXTENDED(510),
     NETWORK_AUTHENTICATION_REQUIRED(511);
 
+
     private final int code;
 
     HttpStatus(int code) {

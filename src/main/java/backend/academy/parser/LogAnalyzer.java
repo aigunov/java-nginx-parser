@@ -18,8 +18,8 @@ public class LogAnalyzer {
         var handler = determinateTypeOfFiles(filters.paths().getFirst());
         var logs = handler.handleFiles(filters);
         counter = new StatisticsCounter(filters, logs);
-        counter.countStatistic();
-
+        var stats = counter.countStatistic();
+        System.out.println(stats);
     }
 
     public Filter acceptCommand(String[] args, String currentDirectory) {
