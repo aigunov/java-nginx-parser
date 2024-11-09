@@ -1,5 +1,6 @@
 package backend.academy.parser.logic;
 
+import backend.academy.parser.model.Fields;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.HttpStatus;
 import backend.academy.parser.model.Log;
@@ -44,14 +45,17 @@ public class StatisticsCounter {
         boolean answer = logg.time().isAfter(filter.from()) && logg.time().isBefore(filter.to());
         if(filter.filterField() != null){
             try {
-                Field filterField = logg.getClass().getDeclaredField(filter.filterField());
+                Fields field = Fields.fromName(filter.filterField().toUpperCase());
+                assert field != null;
+                Field filterField = logg.getClass().getDeclaredField(field.getField());
                 filterField.setAccessible(true);
 
                 var pattern = Pattern.compile(filter.filterValue());
                 var fieldValue = filterField.get(logg);
                 var matcher = pattern.matcher(String.valueOf(fieldValue));
 
-                return answer && matcher.matches();
+                var f = matcher.matches();
+                return answer && f;
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 log.error("Ошибка конвертирования по --filter-field");
                 throw new RuntimeException(e);
@@ -64,8 +68,8 @@ public class StatisticsCounter {
         codes.put(log.status(), codes.getOrDefault(log.status(), 0) + 1);
         resources.put(log.resource(), resources.getOrDefault(log.resource(), 0) + 1);
         bodyByteSentSummary += log.bodyByteSent();
-        bodyByteSentList.add(log.bodyByteSent());
         countOfRequests++;
+        bodyByteSentList.add(log.bodyByteSent());
     }
 
     private Statistic getStatistic(){
