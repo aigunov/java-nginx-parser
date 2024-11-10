@@ -25,7 +25,6 @@ public class ADOCReportGeneratorTest {
 
     @Test
     public void testGenerateReport() {
-        // Arrange: создаем объекты Filter и Statistic для теста
         Filter filter = new Filter(
             List.of("access.log"),
             LocalDateTime.of(2024, 8, 31, 0, 0),
@@ -56,7 +55,6 @@ public class ADOCReportGeneratorTest {
 
         PrintStream out = new PrintStream(outputStream);
 
-        // Act: генерируем отчет
         reportGenerator.generateReport(filter, statistic, out);
         String reportContent = outputStream.toString();
 

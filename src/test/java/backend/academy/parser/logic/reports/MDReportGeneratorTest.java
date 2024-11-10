@@ -25,7 +25,6 @@ public class MDReportGeneratorTest {
 
     @Test
     public void testGenerateReport() {
-        // Arrange: создаем объекты Filter и Statistic для теста
         Filter filter = new Filter(
             List.of("access.log"),
             LocalDateTime.of(2024, 8, 31, 0, 0),
