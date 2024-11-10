@@ -42,7 +42,7 @@ public class StatisticsCounter {
         return getStatistic();
     }
 
-    private boolean filterLog(final Log logg) {
+    public boolean filterLog(final Log logg) {
         boolean answer = logg.time().isAfter(filter.from()) && logg.time().isBefore(filter.to());
         if(filter.filterField() != null){
             try {

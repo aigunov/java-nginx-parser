@@ -45,10 +45,6 @@ public class LogParser {
         }
         String[] parts = requestLine.split(" ")[1].split("/");
 
-        if (parts.length < 3) {
-            return null; // Некорректный формат строки
-        }
-
         return parts[parts.length - 1];
     }
 }

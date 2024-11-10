@@ -14,17 +14,17 @@ public class ArgumentsValidator implements IParametersValidator {
 
     @Override
     public void validate(Map<String, Object> map) throws ParameterException {
-        var to = (LocalDateTime) map.getOrDefault("to", LocalDateTime.MIN);
-        var from = (LocalDateTime) map.getOrDefault("from", LocalDateTime.MAX);
-        if (to.isAfter(from)) {
+        var to = (LocalDateTime) map.getOrDefault("--to", LocalDateTime.MIN);
+        var from = (LocalDateTime) map.getOrDefault("--from", LocalDateTime.MAX);
+        if (!to.isAfter(from)) {
             throw new ParameterException("Неверно заданы фильтры для начала и конца даты");
         }
-        var filterField = map.get("--filter-field").toString();
-        if (filterField != null && !fields.contains(filterField)) {
+        var filterField = map.get("--filter-field");
+        if (filterField != null && !fields.contains(filterField.toString())) {
             throw new ParameterException("Неверно заданы параметры для фильтрации");
         }
 
-        var filterValue = map.get("--filter-value").toString();
+        var filterValue = map.get("--filter-value");
         // если задано поле для сортировки, но не задано значения для сортировки по полю и наоборот
         if ((filterField != null && filterValue == null) || (filterField == null && filterValue != null)) {
             throw new ParameterException("Неверно заданы параметры для фильтрации");
