@@ -24,14 +24,14 @@ public class ArgumentsValidator implements IParametersValidator {
         if (!to.isAfter(from)) {
             throw new ParameterException("Неверно заданы фильтры для начала и конца даты");
         }
-        var filterField = map.get("--filter-field").toString();
-        if (filterField != null && !FIELDS.contains(filterField)) {
+        var filterField = map.getOrDefault("--filter-field", "").toString();
+        if (!filterField.isEmpty() && !FIELDS.contains(filterField)) {
             throw new ParameterException("Неверно заданы параметры для фильтрации по полю");
         }
 
         var filterValue = map.get("--filter-value");
         // если задано поле для сортировки, но не задано значения для сортировки по полю и наоборот
-        if ((filterField != null && filterValue == null) || (filterField == null && filterValue != null)) {
+        if ((!filterField.isEmpty() && filterValue == null) || (filterField.isEmpty() && filterValue != null)) {
             throw new ParameterException("Неверно заданы параметры для фильтрации по значению");
         }
     }

@@ -1,6 +1,7 @@
 package backend.academy.parser.logic.cli;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,7 +34,7 @@ class LocalDateTimeConverterTest {
     void testConvertInvalidFormat() {
         String invalidDateString = "2023-12-10T15:30"; // Некорректный формат
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(DateTimeParseException.class, () -> {
             converter.convert(invalidDateString);
         });
     }
