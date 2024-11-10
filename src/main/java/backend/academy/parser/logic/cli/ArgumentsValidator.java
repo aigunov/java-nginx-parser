@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ArgumentsValidator implements IParametersValidator {
-    private static final List<String> fields = List.of(
+    private static final List<String> FIELDS = List.of(
         "remote_addr", "remote_user", "time_local", "request", "status", "body_bytes_sent", "http_referer",
         "http_user_agent"
     );
@@ -24,15 +24,15 @@ public class ArgumentsValidator implements IParametersValidator {
         if (!to.isAfter(from)) {
             throw new ParameterException("Неверно заданы фильтры для начала и конца даты");
         }
-        var filterField = map.get("--filter-field");
-        if (filterField != null && !fields.contains(filterField.toString())) {
-            throw new ParameterException("Неверно заданы параметры для фильтрации");
+        var filterField = map.get("--filter-field").toString();
+        if (filterField != null && !FIELDS.contains(filterField)) {
+            throw new ParameterException("Неверно заданы параметры для фильтрации по полю");
         }
 
         var filterValue = map.get("--filter-value");
         // если задано поле для сортировки, но не задано значения для сортировки по полю и наоборот
         if ((filterField != null && filterValue == null) || (filterField == null && filterValue != null)) {
-            throw new ParameterException("Неверно заданы параметры для фильтрации");
+            throw new ParameterException("Неверно заданы параметры для фильтрации по значению");
         }
     }
 }

@@ -6,5 +6,5 @@ import java.io.PrintStream;
 
 public interface ReportGenerator {
 
-    void generateReport(final Filter filter, final Statistic statistic, PrintStream out);
+    void generateReport(Filter filter, Statistic statistic, PrintStream out);
 }

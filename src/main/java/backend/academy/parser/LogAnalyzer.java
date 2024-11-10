@@ -11,24 +11,26 @@ import backend.academy.parser.model.Log;
 import backend.academy.parser.model.ReportFormat;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
+@SuppressFBWarnings({"DM_DEFAULT_ENCODING"})
+@Slf4j
 public class LogAnalyzer {
-    private StatisticsCounter counter;
     private final PrintStream out = new PrintStream(System.out);
 
     public void analyze(String[] args, String currentDirectory) {
         var filters = acceptCommand(args, currentDirectory);
         var handler = determinateTypeOfFiles(filters.paths().getFirst());
         List<Log> logs = handler.handleFiles(filters);
-        counter = new StatisticsCounter(filters, logs);
+        StatisticsCounter counter = new StatisticsCounter(filters, logs);
         var stats = counter.countStatistic();
-        System.out.println(stats);
         var reportGenerator =
-            filters.format() == ReportFormat.MARKDOWN || filters.format() == null ?
-                new MDReportGenerator() : new ADOCReportGenerator();
+            filters.format() == ReportFormat.MARKDOWN || filters.format() == null
+                ? new MDReportGenerator() : new ADOCReportGenerator();
         reportGenerator.generateReport(filters, stats, out);
     }
 
@@ -40,15 +42,8 @@ public class LogAnalyzer {
         filter.domenPath(Path.of(currentDirectory));
         try {
             commander.parse(args);
-            // Получаем объект filter с аргументами
-            System.out.println("Path: " + filter.paths());
-            System.out.println("From: " + filter.from());
-            System.out.println("To: " + filter.to());
-            System.out.println("Format: " + filter.format());
-            System.out.println("Filter Field: " + filter.filterField());
-            System.out.println("Filter Value: " + filter.filterValue());
         } catch (ParameterException e) {
-            System.err.println("Ошибка в аргументах: " + e.getMessage());
+            log.error("Ошибка в аргументах: {}", e.getMessage());
             commander.usage();
         }
         return filter;
@@ -61,6 +56,4 @@ public class LogAnalyzer {
             return new PathFileHandler();
         }
     }
-
-
 }

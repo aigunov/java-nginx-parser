@@ -1,13 +1,16 @@
 package backend.academy.parser.model;
 
+import lombok.Getter;
+
 /**
  * Enum дозволенных параметров для ключа --filter-field
  * сделано для того чтобы не пользоваться в лишний раз Reflection API
  * вместо этого просто через константу извлечь название переменной
  * в классе Log по которому можно проводить фильтрацию
  */
+@Getter
 public enum Fields {
-    REMOTE_ADDR ("ip"),
+    REMOTE_ADDR("ip"),
     REMOTE_USER("user"),
     TIME_LOCAL("time"),
     REQUEST("request"),
@@ -20,9 +23,6 @@ public enum Fields {
 
     Fields(String field) {
         this.field = field;
-    }
-    public String getField() {
-        return field;
     }
 
     public static Fields fromName(String name) {

@@ -11,13 +11,13 @@ import java.util.List;
 public interface FileHandler {
 
     /**
-     * Этот метод вызываемый другими классами для извлечения содержимого файлов в виде List<Log>
+     * Этот метод вызываемый другими классами для извлечения содержимого файлов в виде {@code List<Log>}
      * Сначала извлекаются абсолютные пути к переданному glob выражению
      * вызывается метод parseLine класса LogParser
      *
      * @param filter - объект класса Filter содержащий в себе переданный через cli параметры
-     * @return - List<Log> содержащий в себе все извлеченные логи
+     * @return - {@code List<Log>} содержащий в себе все извлеченные логи
      */
 
-    List<Log> handleFiles(Filter filter) ;
+    List<Log> handleFiles(Filter filter);
 }

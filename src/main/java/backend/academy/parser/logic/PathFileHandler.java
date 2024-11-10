@@ -43,28 +43,28 @@ public class PathFileHandler implements FileHandler {
         try {
             return Files.lines(path);
         } catch (IOException e) {
-            System.out.println("Ошибка чтения файла: " + path);
+            log.error("Ошибка чтения файла: {}", path);
             return Stream.empty();
         }
     }
 
     /**
-     * Метод находит абсолютные пути к файлам соответствующие GLOB в pattern при помощи FileVisitor<Path>
+     * Метод находит абсолютные пути к файлам соответствующие GLOB в pattern при помощи {@code FileVisitor<Path>}
      *
      * @param pattern - GLOB выражение по которому происходит  PathMatcher
      * @param rootDir - Корневая директория содержащие местоположение в системе места откуда была запущена программа
      * @return - Список всех абсолютных путей соответствующих glob выражению
      */
     Set<Path> getPathsToFile(final String pattern, final Path rootDir) {
-        Set<Path> matchesList = new TreeSet<>();
-        FileVisitor<Path> matchesVisitor = new SimpleFileVisitor<Path>() {
+        Set<Path> matches = new TreeSet<>();
+        FileVisitor<Path> matchesVisitor = new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attribs) {
                 FileSystem fs = FileSystems.getDefault();
                 PathMatcher matcher = fs.getPathMatcher("glob:" + pattern);
                 Path name = file.getFileName();
                 if (matcher.matches(name)) {
-                    matchesList.add(file);
+                    matches.add(file);
                 }
                 return FileVisitResult.CONTINUE;
             }
@@ -75,6 +75,6 @@ public class PathFileHandler implements FileHandler {
             log.error("Не удалось прочитать файл");
             throw new RuntimeException(e);
         }
-        return matchesList;
+        return matches;
     }
 }

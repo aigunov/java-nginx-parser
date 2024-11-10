@@ -6,6 +6,7 @@ import backend.academy.parser.model.HttpStatus;
 import backend.academy.parser.model.Log;
 import backend.academy.parser.model.Statistic;
 import com.google.common.math.Quantiles;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +18,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
+@SuppressWarnings({"MagicNumber"})
+@SuppressFBWarnings({"RFI_SET_ACCESSIBLE"})
 /**
  * Класс ответственный за подсчет статистики в файле
  */
@@ -38,7 +41,7 @@ public class StatisticsCounter {
         bodyByteSentSummary = 0L;
     }
 
-    public Statistic countStatistic(){
+    public Statistic countStatistic() {
         logs.stream()
             .filter(this::filterLog)
             .forEach(this::calculateDataInLog);
@@ -64,11 +67,11 @@ public class StatisticsCounter {
      */
     public boolean filterLog(final Log logg) {
         boolean answer = logg.time().isAfter(filter.from()) && logg.time().isBefore(filter.to());
-        if(filter.filterField() != null){
+        if (filter.filterField() != null) {
             try {
                 Fields field = Fields.fromName(filter.filterField().toUpperCase());
                 assert field != null;
-                Field filterField = logg.getClass().getDeclaredField(field.getField());
+                Field filterField = logg.getClass().getDeclaredField(field.field());
                 filterField.setAccessible(true);
 
                 var pattern = Pattern.compile(filter.filterValue());
@@ -86,8 +89,8 @@ public class StatisticsCounter {
     }
 
     /**
+     * Метод подсчитывает данные для статистики
      * @param log подходящий под условия лог
-     *            метод подсчитывает данные для статистики
      */
     private void calculateDataInLog(final Log log) {
         codes.put(log.status(), codes.getOrDefault(log.status(), 0) + 1);
@@ -98,9 +101,10 @@ public class StatisticsCounter {
     }
 
     /**
-     * @return объект record Statistic хранящий в себе всю собранную и агрегированную информацию из логов
+     * Метод создает statistic хранящий в себе всю собранную и агрегированную информацию из логов
+     * @return объект record Statistic
      */
-    private Statistic getStatistic(){
+    private Statistic getStatistic() {
         Collections.sort(bodyByteSentList);
         var avg = bodyByteSentSummary / countOfRequests;
         double percent95 = Quantiles.percentiles().index(95).compute(bodyByteSentList);
@@ -108,7 +112,7 @@ public class StatisticsCounter {
         double percent99 = Quantiles.percentiles().index(99).compute(bodyByteSentList);
 
         var topStatusCodes = codes.entrySet().stream()
-            .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed()) // Сортируем по значению в обратном порядке
+            .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
             .collect(Collectors.toMap(
                 entry -> convertToEnum(entry.getKey()), // Преобразуем код статуса в константу HttpStatus
                 Map.Entry::getValue, // Значение - количество

@@ -3,6 +3,7 @@ package backend.academy.parser.logic;
 import backend.academy.parser.logic.interfaces.FileHandler;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Log;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 
+@SuppressFBWarnings({"DM_DEFAULT_ENCODING"})
 /**
  * Класс ответственный за работу с файлами находящимся на сервере
  */
@@ -32,8 +34,9 @@ public class URLFileHandler implements FileHandler {
     }
 
     /**
+     * Метод читает строки файла
      * @param url к файлу на сервере
-     * @return Stream<String> от прочитанных строк файла,
+     * @return {@code Stream<String>} от прочитанных строк файла,
      *     при этом не загружая весь файл в память
      */
     private Stream<String> readFileLines(String url) {
@@ -43,9 +46,6 @@ public class URLFileHandler implements FileHandler {
         try {
             log.info("Послан запрос: {} {}", request.method(), request.uri());
             var response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-            if (!(response.statusCode() == 200)) {
-                throw new IOException("Файл по URL: " + url + " недоступен.");
-            }
             BufferedReader reader = new BufferedReader(new InputStreamReader(response.body()));
             return  reader.lines();
         } catch (IOException | InterruptedException e) {

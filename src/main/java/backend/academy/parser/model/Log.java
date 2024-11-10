@@ -1,8 +1,9 @@
 package backend.academy.parser.model;
 
-import lombok.Builder;
 import java.time.LocalDateTime;
+import lombok.Builder;
 
+@SuppressWarnings({"RecordComponentNumber"})
 /**
  * Record Log в который парсится строка из файла с логами
  * @param ip - адрес

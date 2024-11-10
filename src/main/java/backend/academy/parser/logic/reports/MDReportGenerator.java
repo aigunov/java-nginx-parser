@@ -3,10 +3,13 @@ package backend.academy.parser.logic.reports;
 import backend.academy.parser.logic.interfaces.ReportGenerator;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Statistic;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+@SuppressWarnings({"MultipleStringLiterals"})
+@SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD"})
 /**
  * Класс для генерации отчета по собранной статистике в формате MarkDown
  */
@@ -75,11 +78,19 @@ public class MDReportGenerator implements ReportGenerator {
         report.append("| Количество уникальных ресурсов | ").append(statistic.resources().size()).append(" |\n");
 
         // Определение наиболее частого и редкого кода ответа
-        var maxCode = statistic.statusCodes().entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(null);
-        var minCode = statistic.statusCodes().entrySet().stream().min(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(null);
+        var maxCode = statistic.statusCodes().entrySet()
+            .stream()
+            .max(Map.Entry.comparingByValue())
+            .map(Map.Entry::getKey).orElse(null);
+        var minCode = statistic.statusCodes().entrySet()
+            .stream()
+            .min(Map.Entry.comparingByValue())
+            .map(Map.Entry::getKey).orElse(null);
 
-        report.append("| Наиболее частый ответ | ").append(maxCode != null ? maxCode + " " + maxCode.getCode() : "N/A").append(" |\n");
-        report.append("| Наиболее редкий ответ | ").append(minCode != null ? minCode + " " + minCode.getCode() : "N/A").append(" |\n");
+        report.append("| Наиболее частый ответ | ")
+            .append(maxCode != null ? maxCode + " " + maxCode.getCode() : "N/A").append(" |\n");
+        report.append("| Наиболее редкий ответ | ")
+            .append(minCode != null ? minCode + " " + minCode.getCode() : "N/A").append(" |\n");
         report.append(" __*Размеры ответов представлены в байтах*__\n");
 
 
