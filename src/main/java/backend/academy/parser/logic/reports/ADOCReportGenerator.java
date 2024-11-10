@@ -15,7 +15,6 @@ public class ADOCReportGenerator implements ReportGenerator {
 
         // Заголовок отчета
         report.append("= Отчет по HTTP-запросам\n");
-        report.append("Автор: Отдел аналитики\n");
         report.append("Дата отчета: ").append(java.time.LocalDate.now()).append("\n\n");
 
         // Общая информация
@@ -54,8 +53,8 @@ public class ADOCReportGenerator implements ReportGenerator {
         for (var entry : statistic.statusCodes().entrySet()) {
             var count = entry.getValue();
             var codePhrase = entry.getKey();
-            report.append("| ").append(codePhrase).append(" | ")
-                .append(String.format("%-22s", count)).append(" | ")
+            report.append("| ").append(codePhrase.getCode()).append(" | ")
+                .append(String.format("%-22s", codePhrase)).append(" | ")
                 .append(String.format("%,d", count)).append("\n");
         }
         report.append("|===\n\n");
