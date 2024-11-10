@@ -35,7 +35,7 @@ public class PathFileHandler implements FileHandler {
             .toList();
     }
 
-    private Stream<String> parseFileLines(Path path) {
+    Stream<String> parseFileLines(Path path) {
         try {
             return Files.lines(path);
         } catch (IOException e) {
@@ -44,7 +44,7 @@ public class PathFileHandler implements FileHandler {
         }
     }
 
-    private Set<Path> getPathsToFile(final String pattern, final Path rootDir) {
+    Set<Path> getPathsToFile(final String pattern, final Path rootDir) {
         Set<Path> matchesList = new TreeSet<>();
         FileVisitor<Path> matchesVisitor = new SimpleFileVisitor<Path>() {
             @Override
