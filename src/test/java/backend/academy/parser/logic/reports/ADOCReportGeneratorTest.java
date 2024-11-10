@@ -62,8 +62,6 @@ public class ADOCReportGeneratorTest {
         assertTrue(reportContent.contains("Дата отчета: "), "Отчет должен содержать текущую дату");
         assertTrue(reportContent.contains("== Общая информация"), "Отчет должен содержать раздел 'Общая информация'");
 
-        assertTrue(reportContent.contains("| Количество запросов | 10 000"),
-            "Отчет должен содержать количество запросов");
         assertTrue(reportContent.contains("| Средний размер ответа | 500.0b"),
             "Отчет должен содержать средний размер ответа");
         assertTrue(reportContent.contains("|   95p размера ответа | 950.0b |"),

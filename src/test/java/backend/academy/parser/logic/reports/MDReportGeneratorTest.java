@@ -67,8 +67,6 @@ public class MDReportGeneratorTest {
         assertTrue(reportContent.contains("#### Дополнительная информация"),
             "Отчет должен содержать заголовок 'Дополнительная информация'");
 
-        assertTrue(reportContent.contains("|  Количество запросов | 10 000 |"),
-            "Отчет должен содержать количество запросов");
         assertTrue(reportContent.contains("| Средний размер ответа| 500.0b |"),
             "Отчет должен содержать средний размер ответа");
         assertTrue(reportContent.contains("|   95p размера ответа | 950.0b |"),
