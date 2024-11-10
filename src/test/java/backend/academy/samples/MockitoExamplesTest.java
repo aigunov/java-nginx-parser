@@ -23,38 +23,12 @@ import static org.mockito.Mockito.when;
  */
 @ExtendWith(MockitoExtension.class)
 public class MockitoExamplesTest {
-    public interface Repository {
-        int count(int a, int b);
-    }
-
-    @RequiredArgsConstructor
-    public static class Service {
-        private final Repository repository;
-
-        public int calculate(int a) {
-            return repository.count(a, 10);
-        }
-    }
-
-    public static class FibonacciService {
-        long fib(int n) {
-            if (n <= 2) return n;
-            return fib(n - 1) + fib(n - 2);
-        }
-    }
-
     @Mock
     private Repository repository;
     @InjectMocks
     private Service service;
-    // same as
-    // private Repository mock2 = mock(Repository.class);
-    // private Service service2 = new Service(mock2);
-
     @Spy
     private FibonacciService fibonacciService = new FibonacciService();
-    // same as
-    // private FibonacciService fibonacciService2 = spy(new FibonacciService());
 
     @Test
     void mockExampleV1_inject_field() {
@@ -73,12 +47,17 @@ public class MockitoExamplesTest {
         assertThat(repository.count(0, 2)).isEqualTo(10);
         assertThat(repository.count(0, 3)).isEqualTo(20);
     }
+    // same as
+    // private Repository mock2 = mock(Repository.class);
+    // private Service service2 = new Service(mock2);
 
     @Test
     void verifyExample() {
         service.calculate(10);
         verify(repository, only()).count(anyInt(), eq(10));
     }
+    // same as
+    // private FibonacciService fibonacciService2 = spy(new FibonacciService());
 
     @Test
     void spyExample() {
@@ -87,5 +66,27 @@ public class MockitoExamplesTest {
         verify(fibonacciService).fib(4);
         verify(fibonacciService, times(2)).fib(3);
         verify(fibonacciService, times(3)).fib(2);
+    }
+
+    public interface Repository {
+        int count(int a, int b);
+    }
+
+    @RequiredArgsConstructor
+    public static class Service {
+        private final Repository repository;
+
+        public int calculate(int a) {
+            return repository.count(a, 10);
+        }
+    }
+
+    public static class FibonacciService {
+        long fib(int n) {
+            if (n <= 2) {
+                return n;
+            }
+            return fib(n - 1) + fib(n - 2);
+        }
     }
 }

@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class URLFileHandlerTest {
 
-    private static HttpServer server;
     private static final int PORT = 8080;
+    private static HttpServer server;
     private final URLFileHandler urlFileHandler = new URLFileHandler();
 
     @BeforeAll

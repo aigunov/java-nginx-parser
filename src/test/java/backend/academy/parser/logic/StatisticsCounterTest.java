@@ -2,19 +2,21 @@ package backend.academy.parser.logic;
 
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Log;
-import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StatisticsCounterTest {
-    private Filter filter = new Filter();
-    private Log log = Log.builder()
+    private final Filter filter = new Filter();
+    private final Log log = Log.builder()
         .ip("127.0.0.1")
         .user("testUser")
-        .time(LocalDateTime.parse("10/Oct/2000:13:55:36 -0700", DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z", Locale.ENGLISH)))
+        .time(LocalDateTime.parse("10/Oct/2000:13:55:36 -0700",
+            DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z", Locale.ENGLISH)))
         .request("GET /some/path/to/resource.jpg HTTP/1.0")
         .resource("resource.jpg")
         .status(200)
@@ -22,7 +24,7 @@ class StatisticsCounterTest {
         .referer("https://example.com")
         .userAgent("Mozilla/5.0")
         .build();
-    private StatisticsCounter counter = new StatisticsCounter(filter, List.of(log));
+    private final StatisticsCounter counter = new StatisticsCounter(filter, List.of(log));
 
     @Test
     void testFilterLogTimeMatch() {

@@ -2,7 +2,8 @@ package backend.academy.parser.logic.cli;
 
 import backend.academy.parser.model.ReportFormat;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class FormatConverterTest {
     private final FormatConverter converter = new FormatConverter();

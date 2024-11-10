@@ -29,12 +29,6 @@ import static org.instancio.Select.field;
  * <a href="https://www.instancio.org/getting-started/">Library documentation</a>
  */
 public class InstancioExamplesTest {
-    public record Person(String name, int age, Address address, String phone) {
-    }
-
-    public record Address(String city) {
-    }
-
     @Test
     public void create() {
         // Create by specifying the class
@@ -91,5 +85,11 @@ public class InstancioExamplesTest {
             .create();
 
         assertThat(person.phone()).containsPattern("\\d{3}-\\d{2}-\\d{2}");
+    }
+
+    public record Person(String name, int age, Address address, String phone) {
+    }
+
+    public record Address(String city) {
     }
 }

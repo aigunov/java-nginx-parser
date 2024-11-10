@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Класс ответственный за работу с файлами находящимся на сервере
+ */
 @Slf4j
 public class URLFileHandler implements FileHandler {
     private final LogParser logParser = new LogParser();
@@ -28,6 +31,11 @@ public class URLFileHandler implements FileHandler {
             .toList();
     }
 
+    /**
+     * @param url к файлу на сервере
+     * @return Stream<String> от прочитанных строк файла,
+     *     при этом не загружая весь файл в память
+     */
     private Stream<String> readFileLines(String url) {
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(url))

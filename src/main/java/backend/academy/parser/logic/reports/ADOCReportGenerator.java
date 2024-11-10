@@ -7,7 +7,17 @@ import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+/**
+ * Класс для генерации отчета по собранной статистике в формате ADOC
+ */
 public class ADOCReportGenerator implements ReportGenerator {
+    /**
+     * Метод формирующий отчет в StringBuilder report
+     *
+     * @param filter    - значения переданных через консоль данных
+     * @param statistic - значения собранной статистики
+     * @param out       - PrintStream для вывода report хоть в консоль хоть в файл
+     */
     @Override
     public void generateReport(final Filter filter, final Statistic statistic, final PrintStream out) {
         StringBuilder report = new StringBuilder();

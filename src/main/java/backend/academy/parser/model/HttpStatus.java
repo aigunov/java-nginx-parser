@@ -1,7 +1,7 @@
 package backend.academy.parser.model;
 
 /**
- * enum содержащий в себе код-статусы и фразы кодов HTTP
+ * Enum содержащий в себе код-статусы и фразы кодов HTTP
  */
 public enum HttpStatus {
     // 1xx: Informational

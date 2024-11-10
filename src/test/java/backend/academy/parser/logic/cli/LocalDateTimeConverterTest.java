@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LocalDateTimeConverterTest {
 
-    private LocalDateTimeConverter converter = new LocalDateTimeConverter();
+    private final LocalDateTimeConverter converter = new LocalDateTimeConverter();
 
     @Test
     void testConvertWithTime() {

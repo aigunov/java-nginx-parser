@@ -1,14 +1,14 @@
 package backend.academy.parser.logic;
 
 import backend.academy.parser.model.Log;
-import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import org.junit.jupiter.api.Test;
 import static org.junit.Assert.assertEquals;
 
 class LogParserTest {
-    private LogParser logParser = new LogParser();
+    private final LogParser logParser = new LogParser();
 
     @Test
     void testParseLine() {

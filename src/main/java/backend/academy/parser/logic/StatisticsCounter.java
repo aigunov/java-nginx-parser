@@ -17,6 +17,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Класс ответственный за подсчет статистики в файле
+ */
 @Slf4j
 public class StatisticsCounter {
     private final Filter filter;
@@ -42,6 +45,23 @@ public class StatisticsCounter {
         return getStatistic();
     }
 
+    /**
+     * Метод конвертирует int статус код ответа http в enum HttpStatus
+     */
+    private static HttpStatus convertToEnum(final int code) {
+        for (HttpStatus status : HttpStatus.values()) {
+            if (status.getCode() == code) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("Неизвестный HTTP статус код: " + code);
+    }
+
+    /**
+     * Метод по  объекту класса filter фильтрует объекты класса Log и отсеивает те что не нужны
+     *
+     * @return boolean значение о том подходит ли logg условиям переданным в filter
+     */
     public boolean filterLog(final Log logg) {
         boolean answer = logg.time().isAfter(filter.from()) && logg.time().isBefore(filter.to());
         if(filter.filterField() != null){
@@ -65,6 +85,10 @@ public class StatisticsCounter {
         return answer;
     }
 
+    /**
+     * @param log подходящий под условия лог
+     *            метод подсчитывает данные для статистики
+     */
     private void calculateDataInLog(final Log log) {
         codes.put(log.status(), codes.getOrDefault(log.status(), 0) + 1);
         resources.put(log.resource(), resources.getOrDefault(log.resource(), 0) + 1);
@@ -73,6 +97,9 @@ public class StatisticsCounter {
         bodyByteSentList.add(log.bodyByteSent());
     }
 
+    /**
+     * @return объект record Statistic хранящий в себе всю собранную и агрегированную информацию из логов
+     */
     private Statistic getStatistic(){
         Collections.sort(bodyByteSentList);
         var avg = bodyByteSentSummary / countOfRequests;
@@ -107,14 +134,5 @@ public class StatisticsCounter {
             .resources(topResources)
             .statusCodes(topStatusCodes)
             .build();
-    }
-
-    private static HttpStatus convertToEnum(final int code) {
-        for (HttpStatus status : HttpStatus.values()) {
-            if (status.getCode() == code) {
-                return status;
-            }
-        }
-        throw new IllegalArgumentException("Неизвестный HTTP статус код: " + code);
     }
 }

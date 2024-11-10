@@ -14,6 +14,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Класс модель возможных параметров передаваемых через cli
+ * работает при помощи JCommander
+ */
 @Getter
 @Setter
 @NoArgsConstructor

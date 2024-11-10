@@ -20,9 +20,13 @@ import java.util.TreeSet;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Класс работающий с локальными файлами
+ */
 @Slf4j
 public class PathFileHandler implements FileHandler {
     private final LogParser logParser = new LogParser();
+
     @Override
     public List<Log> handleFiles(Filter filter) {
         List<Path> paths = new ArrayList<>();
@@ -44,6 +48,13 @@ public class PathFileHandler implements FileHandler {
         }
     }
 
+    /**
+     * Метод находит абсолютные пути к файлам соответствующие GLOB в pattern при помощи FileVisitor<Path>
+     *
+     * @param pattern - GLOB выражение по которому происходит  PathMatcher
+     * @param rootDir - Корневая директория содержащие местоположение в системе места откуда была запущена программа
+     * @return - Список всех абсолютных путей соответствующих glob выражению
+     */
     Set<Path> getPathsToFile(final String pattern, final Path rootDir) {
         Set<Path> matchesList = new TreeSet<>();
         FileVisitor<Path> matchesVisitor = new SimpleFileVisitor<Path>() {

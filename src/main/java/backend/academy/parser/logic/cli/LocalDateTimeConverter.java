@@ -5,9 +5,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeConverter implements IStringConverter<LocalDateTime> {
+
+    /**
+     * Конвертирует дату из cli в объект LocalDateTime
+     * Возможные форматы передаваемые из cli: "yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd"
+     */
     @Override
     public LocalDateTime convert(String value) {
-        // Форматы дат, которые мы будем использовать
         DateTimeFormatter formatterWithTime = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         DateTimeFormatter formatterWithoutTime = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 

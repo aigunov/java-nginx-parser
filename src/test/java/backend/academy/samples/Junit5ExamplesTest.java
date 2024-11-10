@@ -35,6 +35,23 @@ import static org.junit.jupiter.api.Assertions.assertTimeout;
 public class Junit5ExamplesTest {
     @Nested
     class ParametrizedTests {
+        private static Stream<MyData> provideData() {
+            return Stream.of(
+                new MyData("Data 1"),
+                new MyData("Data 2"),
+                new MyData("Data 3")
+            );
+        }
+
+        private static Stream<Arguments> provideStringsForIsBlank() {
+            return Stream.of(
+                Arguments.of(null, true),
+                Arguments.of("", true),
+                Arguments.of("  ", true),
+                Arguments.of("not blank", false)
+            );
+        }
+
         @ParameterizedTest
         @ValueSource(ints = {1, 3, 5, -3, 15, Integer.MAX_VALUE}) // six numbers
         void isOdd_ShouldReturnTrueForOddNumbers(int number) {
@@ -55,30 +72,10 @@ public class Junit5ExamplesTest {
             assertThat(actualValue).isEqualTo(expected);
         }
 
-        record MyData(String data) {
-        }
-
-        private static Stream<MyData> provideData() {
-            return Stream.of(
-                new MyData("Data 1"),
-                new MyData("Data 2"),
-                new MyData("Data 3")
-            );
-        }
-
         @ParameterizedTest
         @MethodSource("provideData")
         void validateData(MyData myData) {
             assertThat(myData.data()).isNotNull();
-        }
-
-        private static Stream<Arguments> provideStringsForIsBlank() {
-            return Stream.of(
-                Arguments.of(null, true),
-                Arguments.of("", true),
-                Arguments.of("  ", true),
-                Arguments.of("not blank", false)
-            );
         }
 
         @ParameterizedTest
@@ -99,6 +96,9 @@ public class Junit5ExamplesTest {
         @ValueSource(strings = {"  ", "\t", "\n"})
         void isBlank_ShouldReturnTrueForAllTypesOfBlankStrings(String input) {
             assertThat(Strings.isBlank(input)).isTrue();
+        }
+
+        record MyData(String data) {
         }
     }
 

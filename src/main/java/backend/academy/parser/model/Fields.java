@@ -1,5 +1,11 @@
 package backend.academy.parser.model;
 
+/**
+ * Enum дозволенных параметров для ключа --filter-field
+ * сделано для того чтобы не пользоваться в лишний раз Reflection API
+ * вместо этого просто через константу извлечь название переменной
+ * в классе Log по которому можно проводить фильтрацию
+ */
 public enum Fields {
     REMOTE_ADDR ("ip"),
     REMOTE_USER("user"),

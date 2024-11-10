@@ -3,10 +3,18 @@ package backend.academy.parser.logic;
 import backend.academy.parser.model.Log;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Locale;
 
+/**
+ * Класс Парсер
+ */
 public class LogParser {
+    /**
+     * Метод который парсит строку лога
+     *
+     * @param line - строка из файла логов которую парсят
+     * @return сконструированный объект класса Log
+     */
     public Log parseLine(final String line) {
         String[] parts = line.split("\"");
 

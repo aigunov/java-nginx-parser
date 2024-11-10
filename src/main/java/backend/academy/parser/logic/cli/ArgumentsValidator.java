@@ -12,6 +12,11 @@ public class ArgumentsValidator implements IParametersValidator {
         "http_user_agent"
     );
 
+    /**
+     * Метод валидации переданных через cli параметров
+     *
+     * @throws ParameterException в случае если хоть один из параметров невалиден
+     */
     @Override
     public void validate(Map<String, Object> map) throws ParameterException {
         var to = (LocalDateTime) map.getOrDefault("--to", LocalDateTime.MIN);
