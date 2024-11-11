@@ -2,7 +2,6 @@ package backend.academy.parser.logic;
 
 import backend.academy.parser.logic.interfaces.FileHandler;
 import backend.academy.parser.model.Filter;
-import backend.academy.parser.model.Log;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
+import backend.academy.parser.model.Statistic;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -25,18 +25,27 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class PathFileHandler implements FileHandler {
-    private final LogParser logParser = new LogParser();
+    private final StatisticsCounter counter;
+    private final Filter filter;
+
+    public PathFileHandler(StatisticsCounter counter, Filter filter) {
+        this.counter = counter;
+        this.filter = filter;
+    }
 
     @Override
-    public List<Log> handleFiles(Filter filter) {
+    public Statistic handleFiles() {
         List<Path> paths = new ArrayList<>();
         for (var path : filter.paths()) {
             paths.addAll(getPathsToFile(path, filter.domenPath()));
         }
-        return paths.stream()
+        paths.stream()
             .flatMap(this::parseFileLines)
-            .map(logParser::parseLine)
-            .toList();
+            .map(LogParser::parseLine)
+            .filter(log -> counter.filterLog(log, filter))
+            .forEach(counter::calculateDataInLog);
+
+        return counter.getStatistic();
     }
 
     Stream<String> parseFileLines(Path path) {

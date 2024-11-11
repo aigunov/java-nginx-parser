@@ -16,7 +16,7 @@ public class LogParser {
      * @param line - строка из файла логов которую парсят
      * @return сконструированный объект класса Log
      */
-    public Log parseLine(final String line) {
+    public static Log parseLine(final String line) {
         String[] parts = line.split("\"");
 
         String[] firstPart = parts[0].split(" ");

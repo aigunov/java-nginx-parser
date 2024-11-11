@@ -2,6 +2,7 @@ package backend.academy.parser.logic.interfaces;
 
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Log;
+import backend.academy.parser.model.Statistic;
 import java.util.List;
 
 /**
@@ -18,6 +19,5 @@ public interface FileHandler {
      * @param filter - объект класса Filter содержащий в себе переданный через cli параметры
      * @return - {@code List<Log>} содержащий в себе все извлеченные логи
      */
-
-    List<Log> handleFiles(Filter filter);
+    Statistic handleFiles();
 }

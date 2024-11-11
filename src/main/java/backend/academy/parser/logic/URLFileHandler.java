@@ -2,7 +2,7 @@ package backend.academy.parser.logic;
 
 import backend.academy.parser.logic.interfaces.FileHandler;
 import backend.academy.parser.model.Filter;
-import backend.academy.parser.model.Log;
+import backend.academy.parser.model.Statistic;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,16 +20,24 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class URLFileHandler implements FileHandler {
-    private final LogParser logParser = new LogParser();
     private final HttpClient client = HttpClient.newHttpClient();
+    private final StatisticsCounter counter;
+    private final Filter filter;
+
+    public URLFileHandler(StatisticsCounter counter, Filter filter) {
+        this.counter = counter;
+        this.filter = filter;
+    }
 
     @Override
-    public List<Log> handleFiles(Filter filter) {
-        return filter.paths()
+    public Statistic handleFiles() {
+        filter.paths()
             .stream()
             .flatMap(this::readFileLines)
-            .map(logParser::parseLine)
-            .toList();
+            .map(LogParser::parseLine)
+            .filter(log -> counter.filterLog(log, filter))
+            .forEach(counter::calculateDataInLog);
+        return counter.getStatistic();
     }
 
     /**
@@ -55,3 +62,4 @@ public class URLFileHandler implements FileHandler {
     }
 
 }
+

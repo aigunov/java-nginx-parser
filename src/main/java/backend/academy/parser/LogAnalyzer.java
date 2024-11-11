@@ -7,14 +7,12 @@ import backend.academy.parser.logic.interfaces.FileHandler;
 import backend.academy.parser.logic.reports.ADOCReportGenerator;
 import backend.academy.parser.logic.reports.MDReportGenerator;
 import backend.academy.parser.model.Filter;
-import backend.academy.parser.model.Log;
 import backend.academy.parser.model.ReportFormat;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.PrintStream;
 import java.nio.file.Path;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
 @SuppressFBWarnings({"DM_DEFAULT_ENCODING"})
@@ -24,10 +22,8 @@ public class LogAnalyzer {
 
     public void analyze(String[] args, String currentDirectory) {
         var filters = acceptCommand(args, currentDirectory);
-        var handler = determinateTypeOfFiles(filters.paths().getFirst());
-        List<Log> logs = handler.handleFiles(filters);
-        StatisticsCounter counter = new StatisticsCounter(filters, logs);
-        var stats = counter.countStatistic();
+        var handler = determinateTypeOfFiles(filters.paths().getFirst(), filters);
+        var stats = handler.handleFiles();
         var reportGenerator =
             filters.format() == ReportFormat.MARKDOWN || filters.format() == null
                 ? new MDReportGenerator() : new ADOCReportGenerator();
@@ -49,11 +45,11 @@ public class LogAnalyzer {
         return filter;
     }
 
-    private FileHandler determinateTypeOfFiles(final String path) {
+    private FileHandler determinateTypeOfFiles(final String path, final Filter filters) {
         if (path.startsWith("http")) {
-            return new URLFileHandler();
+            return new URLFileHandler(StatisticsCounter.getInstance(), filters);
         } else {
-            return new PathFileHandler();
+            return new PathFileHandler(StatisticsCounter.getInstance(), filters);
         }
     }
 }

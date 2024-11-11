@@ -25,28 +25,27 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class StatisticsCounter {
-    private final Filter filter;
-    private final List<Log> logs;
     private final List<Integer> bodyByteSentList = new ArrayList<>();
     private final TreeMap<Integer, Integer> codes;
     private final TreeMap<String, Integer> resources;
     private Long bodyByteSentSummary;
     private int countOfRequests;
 
-    public StatisticsCounter(Filter filter, List<Log> logs) {
-        this.filter = filter;
-        this.logs = logs;
+    private static StatisticsCounter instance;
+
+    private StatisticsCounter() {
         codes = new TreeMap<>();
         resources = new TreeMap<>();
         bodyByteSentSummary = 0L;
     }
 
-    public Statistic countStatistic() {
-        logs.stream()
-            .filter(this::filterLog)
-            .forEach(this::calculateDataInLog);
-        return getStatistic();
+    public static StatisticsCounter getInstance() {
+        if (instance == null) {
+            instance = new StatisticsCounter();
+        }
+        return instance;
     }
+
 
     /**
      * Метод конвертирует int статус код ответа http в enum HttpStatus
@@ -65,7 +64,7 @@ public class StatisticsCounter {
      *
      * @return boolean значение о том подходит ли logg условиям переданным в filter
      */
-    public boolean filterLog(final Log logg) {
+    public boolean filterLog(final Log logg, final Filter filter) {
         boolean answer = logg.time().isAfter(filter.from()) && logg.time().isBefore(filter.to());
         if (filter.filterField() != null) {
             try {
@@ -92,7 +91,7 @@ public class StatisticsCounter {
      * Метод подсчитывает данные для статистики
      * @param log подходящий под условия лог
      */
-    private void calculateDataInLog(final Log log) {
+    void calculateDataInLog(final Log log) {
         codes.put(log.status(), codes.getOrDefault(log.status(), 0) + 1);
         resources.put(log.resource(), resources.getOrDefault(log.resource(), 0) + 1);
         bodyByteSentSummary += log.bodyByteSent();
@@ -104,7 +103,7 @@ public class StatisticsCounter {
      * Метод создает statistic хранящий в себе всю собранную и агрегированную информацию из логов
      * @return объект record Statistic
      */
-    private Statistic getStatistic() {
+    Statistic getStatistic() {
         Collections.sort(bodyByteSentList);
         var avg = bodyByteSentSummary / countOfRequests;
         double percent95 = Quantiles.percentiles().index(95).compute(bodyByteSentList);

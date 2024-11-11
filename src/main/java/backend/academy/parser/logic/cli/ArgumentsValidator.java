@@ -5,6 +5,7 @@ import com.beust.jcommander.ParameterException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class ArgumentsValidator implements IParametersValidator {
     private static final List<String> FIELDS = List.of(
@@ -24,14 +25,14 @@ public class ArgumentsValidator implements IParametersValidator {
         if (!to.isAfter(from)) {
             throw new ParameterException("Неверно заданы фильтры для начала и конца даты");
         }
-        var filterField = map.getOrDefault("--filter-field", "").toString();
+        var filterField = Optional.ofNullable(map.get("--filter-field")).orElse("").toString();
         if (!filterField.isEmpty() && !FIELDS.contains(filterField)) {
             throw new ParameterException("Неверно заданы параметры для фильтрации по полю");
         }
 
-        var filterValue = map.get("--filter-value");
+        var filterValue = Optional.ofNullable(map.get("--filter-value")).orElse("").toString();
         // если задано поле для сортировки, но не задано значения для сортировки по полю и наоборот
-        if ((!filterField.isEmpty() && filterValue == null) || (filterField.isEmpty() && filterValue != null)) {
+        if ((!filterField.isEmpty() && filterValue.isEmpty()) || (filterField.isEmpty() && !filterValue.isEmpty())) {
             throw new ParameterException("Неверно заданы параметры для фильтрации по значению");
         }
     }
