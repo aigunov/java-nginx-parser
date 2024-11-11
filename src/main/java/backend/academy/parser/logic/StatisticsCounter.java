@@ -39,7 +39,7 @@ public class StatisticsCounter {
         bodyByteSentSummary = 0L;
     }
 
-    public static StatisticsCounter getInstance() {
+    public static synchronized StatisticsCounter getInstance() {
         if (instance == null) {
             instance = new StatisticsCounter();
         }

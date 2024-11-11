@@ -1,6 +1,7 @@
 package backend.academy.parser.logic;
 
 import backend.academy.parser.model.Filter;
+import backend.academy.parser.model.HttpStatus;
 import backend.academy.parser.model.Statistic;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.BufferedReader;
@@ -13,7 +14,7 @@ import java.net.http.HttpResponse;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 
-@SuppressFBWarnings({"DM_DEFAULT_ENCODING"})
+@SuppressFBWarnings({"DM_DEFAULT_ENCODING", "OS_OPEN_STREAM"})
 /**
  * Класс ответственный за работу с файлами находящимся на сервере
  */
@@ -42,13 +43,16 @@ public class URLFileHandler extends FileHandler {
      * @return {@code Stream<String>} от прочитанных строк файла,
      *     при этом не загружая весь файл в память
      */
-    private Stream<String> readFileLines(final String url) {
+    public Stream<String> readFileLines(final String url) {
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .build();
         try {
             log.info("Послан запрос: {} {}", request.method(), request.uri());
             var response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            if (!(response.statusCode() == HttpStatus.OK.getCode())) {
+                throw new IOException("Файл по URL: " + url + " недоступен.");
+            }
             BufferedReader reader = new BufferedReader(new InputStreamReader(response.body()));
             return  reader.lines();
         } catch (IOException | InterruptedException e) {

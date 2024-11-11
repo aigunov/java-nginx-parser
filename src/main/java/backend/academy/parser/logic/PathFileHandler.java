@@ -1,6 +1,7 @@
 package backend.academy.parser.logic;
 
 import backend.academy.parser.model.Filter;
+import backend.academy.parser.model.Statistic;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -14,7 +15,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
-import backend.academy.parser.model.Statistic;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -40,7 +40,7 @@ public class PathFileHandler extends FileHandler {
         return counter.getStatistic();
     }
 
-    private Stream<String> readFileLines(Path path) {
+    public Stream<String> readFileLines(Path path) {
         try {
             return Files.lines(path);
         } catch (IOException e) {

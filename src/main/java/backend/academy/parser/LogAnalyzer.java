@@ -20,8 +20,8 @@ public class LogAnalyzer {
 
     public void analyze(String[] args, String currentDirectory) {
         var filters = acceptCommand(args, currentDirectory);
-        var handler = filters.paths().getFirst().startsWith("http") ?
-            new URLFileHandler(filters) : new PathFileHandler(filters);
+        var handler = filters.paths().getFirst().startsWith("http")
+            ? new URLFileHandler(filters) : new PathFileHandler(filters);
         var stats = handler.handleFiles();
         var reportGenerator = filters.format() == ReportFormat.MARKDOWN || filters.format() == null
             ? new MDReportGenerator() : new ADOCReportGenerator();

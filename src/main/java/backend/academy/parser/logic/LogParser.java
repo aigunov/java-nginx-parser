@@ -14,7 +14,7 @@ public class LogParser {
 
     private LogParser() {}
 
-    public static LogParser getInstance() {
+    public static synchronized LogParser getInstance() {
         if (instance == null) {
             instance = new LogParser();
         }

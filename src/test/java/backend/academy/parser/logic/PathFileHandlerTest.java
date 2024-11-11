@@ -1,106 +1,82 @@
 package backend.academy.parser.logic;
 
 import backend.academy.parser.model.Filter;
-import backend.academy.parser.model.Log;
+import backend.academy.parser.model.Statistic;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.io.TempDir;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class PathFileHandlerTest {
+class PathFileHandlerTest {
+    private PathFileHandler pathFileHandler;
+    private Filter filter;
 
-//    private Path tempDir;
-//    private PathFileHandler pathFileHandler;
-//    private LogParser logParser;
-//
-//    @BeforeEach
-//    public void setUp() throws IOException {
-//        tempDir = Files.createTempDirectory("testDir");
-//        Filter mock = Mockito.mock(Filter.class);)
-//        pathFileHandler = new PathFileHandler(StatisticsCounter.getInstance(), mock);
-//        logParser = new LogParser();
-//    }
-//
-//    @AfterEach
-//    public void tearDown() throws IOException {
-//        Files.walkFileTree(tempDir, new SimpleFileVisitor<Path>() {
-//            @Override
-//            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-//                Files.delete(file);
-//                return FileVisitResult.CONTINUE;
-//            }
-//
-//            @Override
-//            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-//                Files.delete(dir);
-//                return FileVisitResult.CONTINUE;
-//            }
-//        });
-//    }
-//
-//    @Test
-//    public void testGetPathsToFile_withMatchingFiles() throws IOException {
-//        Path matchingFile1 = Files.createFile(tempDir.resolve("logfile1.log"));
-//        Path matchingFile2 = Files.createFile(tempDir.resolve("logfile2.log"));
-//        Path nonMatchingFile = Files.createFile(tempDir.resolve("otherfile.txt"));
-//
-//        Set<Path> result = pathFileHandler.getPathsToFile("*.log", tempDir);
-//
-//        assertTrue(result.contains(matchingFile1), "Ожидается, что файл logfile1.log будет найден");
-//        assertTrue(result.contains(matchingFile2), "Ожидается, что файл logfile2.log будет найден");
-//        assertFalse(result.contains(nonMatchingFile), "Ожидается, что файл otherfile.txt не будет найден");
-//        assertEquals(2, result.size(), "Ожидается, что найдено ровно 2 файла");
-//    }
-//
-//    @Test
-//    public void testParseFileLines_withValidFile() throws IOException {
-//        Path testFile = Files.createFile(tempDir.resolve("logfile.log"));
-//        Files.writeString(testFile, "Log entry 1\nLog entry 2\n");
-//
-//        Stream<String> lines = pathFileHandler.parseFileLines(testFile);
-//        List<String> result = lines.toList();
-//
-//        assertEquals(2, result.size(), "Ожидается 2 строки");
-//        assertEquals("Log entry 1", result.get(0));
-//        assertEquals("Log entry 2", result.get(1));
-//    }
-//
-//    @Test
-//    public void testParseFileLines_withNonExistentFile() {
-//        Path nonExistentFile = tempDir.resolve("nonexistent.log");
-//
-//        Stream<String> lines = pathFileHandler.parseFileLines(nonExistentFile);
-//
-//        assertTrue(lines.toList().isEmpty(), "Ожидается пустой поток строк для несуществующего файла");
-//    }
-//
-//    @Test
-//    public void testHandleFiles_withMultipleFiles() throws IOException {
-//        Path logFile1 = Files.createFile(tempDir.resolve("logfile1.log"));
-//        Files.writeString(logFile1,
-//            "216.46.173.126 - - [04/Jun/2015:04:06:36 +0000] \"GET /downloads/product_1 HTTP/1.1\" 304 0 \"-\" \"Debian APT-HTTP/1.3 (0.8.16~exp12ubuntu10.17)\"\n");
-//        Path logFile2 = Files.createFile(tempDir.resolve("logfile2.log"));
-//        Files.writeString(logFile2,
-//            "117.203.36.5 - - [04/Jun/2015:04:06:17 +0000] \"GET /downloads/product_2 HTTP/1.1\" 304 0 \"-\" \"Debian APT-HTTP/1.3 (1.0.1ubuntu2)\"\n");
-//        Filter filter = Filter.builder()
-//            .paths(List.of("*.log"))
-//            .domenPath(tempDir)
-//            .build();
-//
-//        List<Log> logs = pathFileHandler.handleFiles(filter);
-//
-//        assertEquals(2, logs.size(), "Ожидается, что найдено и обработано 2 записи лога");
-//    }
+    @TempDir
+    Path tempDir;
+
+    @BeforeEach
+    void setUp() {
+        filter = new Filter();
+        filter.paths(List.of("*.log"));
+        filter.domenPath(tempDir);
+        pathFileHandler = new PathFileHandler(filter);
+    }
+
+    @Test
+    void testGetPathsToFile_WithMatchingFiles() throws IOException {
+        Path matchingFile1 = Files.createFile(tempDir.resolve("test1.log"));
+        Path matchingFile2 = Files.createFile(tempDir.resolve("test2.log"));
+        Path nonMatchingFile = Files.createFile(tempDir.resolve("test.txt"));
+
+        Stream<Path> result = pathFileHandler.getPathsToFile("*.log", tempDir);
+
+        assertThat(result).containsExactlyInAnyOrder(matchingFile1, matchingFile2);
+    }
+
+    @Test
+    void testGetPathsToFile_NoMatchingFiles() throws IOException {
+        Files.createFile(tempDir.resolve("test.txt"));
+
+        Stream<Path> result = pathFileHandler.getPathsToFile("*.log", tempDir);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void testReadFileLines_WithExistingFile() throws IOException {
+        Path testFile = Files.createFile(tempDir.resolve("test.log"));
+        Files.writeString(testFile, "line1\nline2\nline3");
+
+        Stream<String> result = pathFileHandler.readFileLines(testFile);
+
+        assertThat(result).containsExactly("line1", "line2", "line3");
+    }
+
+    @Test
+    void testReadFileLines_FileDoesNotExist() {
+        Path nonExistentFile = tempDir.resolve("nonexistent.log");
+
+        Stream<String> result = pathFileHandler.readFileLines(nonExistentFile);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void testHandleFiles_WithValidFilter() throws IOException {
+        Path testFile1 = Files.createFile(tempDir.resolve("test1.log"));
+        Path testFile2 = Files.createFile(tempDir.resolve("test2.log"));
+        Files.writeString(testFile1, "216.46.173.126 - - [04/Jun/2015:04:06:11 +0000] \"GET /downloads/product_1 HTTP/1.1\" 304 0 \"-\" \"Debian APT-HTTP/1.3 (0.8.16~exp12ubuntu10.17)\"\n");
+        Files.writeString(testFile2, "216.46.173.126 - - [04/Jun/2015:05:06:21 +0000] \"GET /downloads/product_1 HTTP/1.1\" 304 0 \"-\" \"Debian APT-HTTP/1.3 (0.8.16~exp12ubuntu10.17)\"\n");
+
+
+        Statistic result = pathFileHandler.handleFiles();
+
+        assertThat(result).isNotNull();
+        assertThat(result.requestCount()).isEqualTo(2);
+    }
 }
