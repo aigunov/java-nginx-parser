@@ -1,5 +1,6 @@
 package backend.academy.parser.logic;
 
+import backend.academy.parser.logic.service.StatisticsCounter;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Log;
 import java.time.LocalDateTime;

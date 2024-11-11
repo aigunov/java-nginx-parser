@@ -1,9 +1,9 @@
 package backend.academy.parser;
 
-import backend.academy.parser.logic.PathFileHandler;
-import backend.academy.parser.logic.URLFileHandler;
 import backend.academy.parser.logic.reports.ADOCReportGenerator;
 import backend.academy.parser.logic.reports.MDReportGenerator;
+import backend.academy.parser.logic.service.PathFileHandler;
+import backend.academy.parser.logic.service.URLFileHandler;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.ReportFormat;
 import com.beust.jcommander.JCommander;

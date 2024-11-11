@@ -1,22 +1,20 @@
 package backend.academy.parser.logic.reports;
 
-import backend.academy.parser.logic.ReportGenerator;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Statistic;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.PrintStream;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @SuppressWarnings({"MultipleStringLiterals"})
-@SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD"})
+@SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "VA_FORMAT_STRING_USES_NEWLINE"})
 /**
  * Класс для генерации отчета по собранной статистике в формате MarkDown
  */
-public class MDReportGenerator implements ReportGenerator {
+public class MDReportGenerator extends ReportGenerator {
 
     /**
-     * Метод формирующий отчет в StringBuilder report
+     * Метод формирующий отчет в text blocks
      *
      * @param filter    - значения переданных через консоль данных
      * @param statistic - значения собранной статистики
@@ -24,76 +22,85 @@ public class MDReportGenerator implements ReportGenerator {
      */
     @Override
     public void generateReport(final Filter filter, final Statistic statistic, PrintStream out) {
-        StringBuilder report = new StringBuilder();
-        var paths = filter.paths().stream().map(path -> path.split("/")[path.split("/").length - 1]).toList();
 
-        // Общая информация
-        report.append("#### Общая информация\n\n");
-        report.append("|       Метрика        |     Значение |\n");
-        report.append("|:--------------------:|:------------:|\n");
-        report.append("|       Файл(-ы)       | `").append(paths).append("` |\n");
-
-        report.append("|    Начальная дата    | ")
-            .append(filter.from() != null && filter.from() != LocalDateTime.MIN ? filter.from() : "-").append(" |\n");
-
-        report.append("|     Конечная дата    | ")
-            .append(filter.to() != null && filter.to() != LocalDateTime.MAX ? filter.to() : "-").append(" |\n");
-
-        report.append("|  Количество запросов | ").append(String.format("%,d", statistic.requestCount()))
-            .append(" |\n");
-
-        report.append("| Средний размер ответа| ").append(statistic.avg()).append("b |\n");
-        report.append("|   99p размера ответа | ").append(statistic.percent99()).append("b |\n");
-        report.append("|   95p размера ответа | ").append(statistic.percent95()).append("b |\n");
-        report.append("|   90p размера ответа | ").append(statistic.percent90()).append("b |\n\n");
-
-        // Запрашиваемые ресурсы
-        report.append("#### Запрашиваемые ресурсы\n\n");
-        report.append("|      Ресурс      | Количество |\n");
-        report.append("|:----------------:|:----------:|\n");
-        for (var entry : statistic.resources().entrySet()) {
-            report.append("|  `/").append(entry.getKey()).append("`  | ")
-                .append(String.format("%,d", entry.getValue())).append(" |\n");
-        }
-        report.append("\n");
-
-
-        // Коды ответа
-        report.append("#### Коды ответа\n\n");
-        report.append("| Код |          Имя          | Количество |\n");
-        report.append("|:---:|:---------------------:|:----------:|\n");
-        for (var entry : statistic.statusCodes().entrySet()) {
-            var count = entry.getValue();
-            var codePhrase = entry.getKey();
-            var codeNum = codePhrase.getCode();
-            report.append("| ").append(codeNum).append(" | ")
-                .append(String.format("%-22s", codePhrase)).append(" | ")
-                .append(String.format("%,d", count)).append(" |\n");
-        }
-
-        // Дополнительная информация
-        report.append("\n#### Дополнительная информация\n\n");
-        report.append("|       Метрика        |     Значение |\n");
-        report.append("|:--------------------:|:------------:|\n");
-        report.append("| Количество уникальных ресурсов | ").append(statistic.resources().size()).append(" |\n");
-
-        // Определение наиболее частого и редкого кода ответа
+        var paths = filter.paths().stream()
+            .map(path -> path.split("/")[path.split("/").length - 1])
+            .toList();
+        extractData(filter, statistic);
         var maxCode = statistic.statusCodes().entrySet()
             .stream()
             .max(Map.Entry.comparingByValue())
-            .map(Map.Entry::getKey).orElse(null);
+            .map(Map.Entry::getKey)
+            .orElse(null);
+
         var minCode = statistic.statusCodes().entrySet()
             .stream()
             .min(Map.Entry.comparingByValue())
-            .map(Map.Entry::getKey).orElse(null);
+            .map(Map.Entry::getKey)
+            .orElse(null);
 
-        report.append("| Наиболее частый ответ | ")
-            .append(maxCode != null ? maxCode + " " + maxCode.getCode() : "N/A").append(" |\n");
-        report.append("| Наиболее редкий ответ | ")
-            .append(minCode != null ? minCode + " " + minCode.getCode() : "N/A").append(" |\n");
-        report.append(" __*Размеры ответов представлены в байтах*__\n");
+        // Общая информация
+        String generalInfo = """
+            #### Общая информация
 
+            |       Метрика        |     Значение |
+            |:--------------------:|:------------:|
+            |       Файл(-ы)       | `%s` |
+            |    Начальная дата    | %s |
+            |     Конечная дата    | %s |
+            |  Количество запросов | %s |
+            | Средний размер ответа| %s |
+            |   99p размера ответа | %s |
+            |   95p размера ответа | %s |
+            |   90p размера ответа | %s |
 
-        out.println(report);
+            """.formatted(paths, fromDate, toDate, requestCount, avgResponseSize, p99ResponseSize, p95ResponseSize,
+            p90ResponseSize);
+
+        // Запрашиваемые ресурсы
+        StringBuilder resourcesInfo = new StringBuilder("""
+            #### Запрашиваемые ресурсы
+
+            |      Ресурс      | Количество |
+            |:----------------:|:----------:|
+            """);
+        statistic.resources().forEach((resource, count) ->
+            resourcesInfo.append("|  `/").append(resource).append("`  | ")
+                .append(String.format("%,d", count)).append(" |\n"));
+        resourcesInfo.append("\n");
+
+        // Коды ответа
+        StringBuilder statusCodesInfo = new StringBuilder("""
+            #### Коды ответа
+
+            | Код |          Имя          | Количество |
+            |:---:|:---------------------:|:----------:|
+            """);
+        statistic.statusCodes().forEach((codePhrase, count) ->
+            statusCodesInfo.append("| ").append(codePhrase.getCode()).append(" | ")
+                .append(String.format("%-22s", codePhrase)).append(" | ")
+                .append(String.format("%,d", count)).append(" |\n"));
+        statusCodesInfo.append("\n");
+
+        // Дополнительная информация
+        String additionalInfo = """
+            #### Дополнительная информация
+
+            |       Метрика        |     Значение |
+            |:--------------------:|:------------:|
+            | Количество уникальных ресурсов | %s |
+            | Наиболее частый ответ | %s |
+            | Наиболее редкий ответ | %s |
+            __*Размеры ответов представлены в байтах*__
+
+            """.formatted(
+            uniqueResourcesCount,
+            maxCode != null ? maxCode + " " + maxCode.getCode() : "N/A",
+            minCode != null ? minCode + " " + minCode.getCode() : "N/A"
+        );
+
+        // Вывод полного отчета
+        out.println(generalInfo + resourcesInfo + statusCodesInfo + additionalInfo);
     }
+
 }

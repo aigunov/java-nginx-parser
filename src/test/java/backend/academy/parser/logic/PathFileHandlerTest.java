@@ -1,5 +1,6 @@
 package backend.academy.parser.logic;
 
+import backend.academy.parser.logic.service.PathFileHandler;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Statistic;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package backend.academy.parser.logic;
+package backend.academy.parser.logic.service;
 
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Statistic;
@@ -56,7 +56,7 @@ public class PathFileHandler extends FileHandler {
      * @param rootDir - Корневая директория содержащие местоположение в системе места откуда была запущена программа
      * @return - Список всех абсолютных путей соответствующих glob выражению
      */
-    Stream<Path> getPathsToFile(final String pattern, final Path rootDir) {
+    public Stream<Path> getPathsToFile(final String pattern, final Path rootDir) {
         Set<Path> matches = new TreeSet<>();
         FileVisitor<Path> matchesVisitor = new SimpleFileVisitor<>() {
             @Override

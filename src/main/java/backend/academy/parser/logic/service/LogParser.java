@@ -1,4 +1,4 @@
-package backend.academy.parser.logic;
+package backend.academy.parser.logic.service;
 
 import backend.academy.parser.model.Log;
 import java.time.LocalDateTime;
