@@ -1,9 +1,7 @@
 package backend.academy.parser;
 
 import backend.academy.parser.logic.PathFileHandler;
-import backend.academy.parser.logic.StatisticsCounter;
 import backend.academy.parser.logic.URLFileHandler;
-import backend.academy.parser.logic.interfaces.FileHandler;
 import backend.academy.parser.logic.reports.ADOCReportGenerator;
 import backend.academy.parser.logic.reports.MDReportGenerator;
 import backend.academy.parser.model.Filter;
@@ -22,11 +20,11 @@ public class LogAnalyzer {
 
     public void analyze(String[] args, String currentDirectory) {
         var filters = acceptCommand(args, currentDirectory);
-        var handler = determinateTypeOfFiles(filters.paths().getFirst(), filters);
+        var handler = filters.paths().getFirst().startsWith("http") ?
+            new URLFileHandler(filters) : new PathFileHandler(filters);
         var stats = handler.handleFiles();
-        var reportGenerator =
-            filters.format() == ReportFormat.MARKDOWN || filters.format() == null
-                ? new MDReportGenerator() : new ADOCReportGenerator();
+        var reportGenerator = filters.format() == ReportFormat.MARKDOWN || filters.format() == null
+            ? new MDReportGenerator() : new ADOCReportGenerator();
         reportGenerator.generateReport(filters, stats, out);
     }
 
@@ -45,11 +43,4 @@ public class LogAnalyzer {
         return filter;
     }
 
-    private FileHandler determinateTypeOfFiles(final String path, final Filter filters) {
-        if (path.startsWith("http")) {
-            return new URLFileHandler(StatisticsCounter.getInstance(), filters);
-        } else {
-            return new PathFileHandler(StatisticsCounter.getInstance(), filters);
-        }
-    }
 }

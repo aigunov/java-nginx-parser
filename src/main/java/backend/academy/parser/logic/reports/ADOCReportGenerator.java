@@ -1,6 +1,6 @@
 package backend.academy.parser.logic.reports;
 
-import backend.academy.parser.logic.interfaces.ReportGenerator;
+import backend.academy.parser.logic.ReportGenerator;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Statistic;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

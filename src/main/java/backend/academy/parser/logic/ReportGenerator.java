@@ -1,4 +1,4 @@
-package backend.academy.parser.logic.interfaces;
+package backend.academy.parser.logic;
 
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Statistic;

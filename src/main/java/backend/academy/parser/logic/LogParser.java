@@ -10,13 +10,24 @@ import java.util.Locale;
  * Класс Парсер
  */
 public class LogParser {
+    private static LogParser instance = new LogParser();
+
+    private LogParser() {}
+
+    public static LogParser getInstance() {
+        if (instance == null) {
+            instance = new LogParser();
+        }
+        return instance;
+    }
+
     /**
      * Метод который парсит строку лога
      *
      * @param line - строка из файла логов которую парсят
      * @return сконструированный объект класса Log
      */
-    public static Log parseLine(final String line) {
+    public Log parseLine(final String line) {
         String[] parts = line.split("\"");
 
         String[] firstPart = parts[0].split(" ");

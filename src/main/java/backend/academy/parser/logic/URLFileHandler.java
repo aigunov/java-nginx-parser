@@ -1,6 +1,5 @@
 package backend.academy.parser.logic;
 
-import backend.academy.parser.logic.interfaces.FileHandler;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Statistic;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -19,22 +18,19 @@ import lombok.extern.slf4j.Slf4j;
  * Класс ответственный за работу с файлами находящимся на сервере
  */
 @Slf4j
-public class URLFileHandler implements FileHandler {
+public class URLFileHandler extends FileHandler {
     private final HttpClient client = HttpClient.newHttpClient();
-    private final StatisticsCounter counter;
     private final Filter filter;
 
-    public URLFileHandler(StatisticsCounter counter, Filter filter) {
-        this.counter = counter;
+    public URLFileHandler(Filter filter) {
         this.filter = filter;
     }
 
     @Override
     public Statistic handleFiles() {
-        filter.paths()
-            .stream()
+        filter.paths().stream()
             .flatMap(this::readFileLines)
-            .map(LogParser::parseLine)
+            .map(parser::parseLine)
             .filter(log -> counter.filterLog(log, filter))
             .forEach(counter::calculateDataInLog);
         return counter.getStatistic();
@@ -46,7 +42,7 @@ public class URLFileHandler implements FileHandler {
      * @return {@code Stream<String>} от прочитанных строк файла,
      *     при этом не загружая весь файл в память
      */
-    private Stream<String> readFileLines(String url) {
+    private Stream<String> readFileLines(final String url) {
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .build();

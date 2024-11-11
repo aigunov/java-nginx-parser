@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LogParserTest {
-    private final LogParser logParser = new LogParser();
+    private final LogParser logParser = LogParser.getInstance();
 
     @Test
     void testParseLine() {
