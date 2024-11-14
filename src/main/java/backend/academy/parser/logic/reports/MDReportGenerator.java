@@ -39,7 +39,6 @@ public class MDReportGenerator extends ReportGenerator {
             .map(Map.Entry::getKey)
             .orElse(null);
 
-        // Общая информация
         String generalInfo = """
             #### Общая информация
 
@@ -57,7 +56,6 @@ public class MDReportGenerator extends ReportGenerator {
             """.formatted(paths, fromDate, toDate, requestCount, avgResponseSize, p99ResponseSize, p95ResponseSize,
             p90ResponseSize);
 
-        // Запрашиваемые ресурсы
         StringBuilder resourcesInfo = new StringBuilder("""
             #### Запрашиваемые ресурсы
 
@@ -99,7 +97,6 @@ public class MDReportGenerator extends ReportGenerator {
             minCode != null ? minCode + " " + minCode.getCode() : "N/A"
         );
 
-        // Вывод полного отчета
         out.println(generalInfo + resourcesInfo + statusCodesInfo + additionalInfo);
     }
 

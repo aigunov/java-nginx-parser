@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings({"MultipleStringLiterals"})
 public class ArgumentsValidator implements IParametersValidator {
     private static final List<String> FIELDS = List.of(
         "remote_addr", "remote_user", "time_local", "request", "status", "body_bytes_sent", "http_referer",
@@ -19,8 +20,8 @@ public class ArgumentsValidator implements IParametersValidator {
      */
     @Override
     public void validate(Map<String, Object> map) throws ParameterException {
-        var to = (LocalDateTime) map.getOrDefault("--to", LocalDateTime.MIN);
-        var from = (LocalDateTime) map.getOrDefault("--from", LocalDateTime.MAX);
+        var to = map.get("--to") == null ? LocalDateTime.MAX : LocalDateTime.parse(map.get("--to").toString());
+        var from = map.get("--from") == null ? LocalDateTime.MIN : LocalDateTime.parse(map.get("--from").toString());
         if (!to.isAfter(from)) {
             throw new ParameterException("Неверно заданы фильтры для начала и конца даты");
         }
