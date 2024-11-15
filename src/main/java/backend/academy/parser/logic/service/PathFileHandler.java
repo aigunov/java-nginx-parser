@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Класс работающий с локальными файлами
  */
+@SuppressWarnings({"MultipleStringLiterals"})
 @Slf4j
 public class PathFileHandler extends FileHandler {
     private final Filter filter;
@@ -49,6 +51,40 @@ public class PathFileHandler extends FileHandler {
         }
     }
 
+    private static boolean containsForbiddenWindowsChars(String filename) {
+        String forbiddenChars = "\\/:*?\"<>|";
+        for (char c : forbiddenChars.toCharArray()) {
+            if (filename.indexOf(c) != -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String transformMethod(Path absolutePath, String relative) {
+        String parentDirectoryMarker = "..";
+
+        Path currentPath = absolutePath;
+
+        var relatives = relative.split("\\\\");
+        for (int i = 0; i < relatives.length; i++) {
+            if (containsForbiddenWindowsChars(relatives[i])) {
+                return currentPath.toString() + "\\"
+                    + String.join("\\", Arrays.copyOfRange(relatives, i, relatives.length));
+            }
+            if (parentDirectoryMarker.equals(relatives[i])) {
+                Path parentPath = currentPath.getParent();
+                if (parentPath == null) {
+                    throw new IllegalStateException("Cannot navigate above root directory.");
+                }
+                currentPath = parentPath;
+            } else {
+                currentPath = currentPath.resolve(relatives[i]);
+            }
+        }
+        return currentPath.toString();
+    }
+
     /**
      * Метод находит абсолютные пути к файлам соответствующие GLOB в pattern при помощи {@code FileVisitor<Path>}
      *
@@ -56,15 +92,16 @@ public class PathFileHandler extends FileHandler {
      * @param rootDir - Корневая директория содержащие местоположение в системе места откуда была запущена программа
      * @return - Список всех абсолютных путей соответствующих glob выражению
      */
-    public Stream<Path> getPathsToFile(final String pattern, final Path rootDir) {
+    public Stream<Path> getPathsToFile(final String pattern, Path rootDir) {
         Set<Path> matches = new TreeSet<>();
+        var normalPattern = transformMethod(rootDir, pattern).replaceAll("\\\\", "/");
         FileVisitor<Path> matchesVisitor = new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attribs) {
                 FileSystem fs = FileSystems.getDefault();
-                PathMatcher matcher = fs.getPathMatcher("glob:" + pattern);
+                PathMatcher matcher = fs.getPathMatcher("glob:" + normalPattern);
                 Path name = file.getFileName();
-                if (matcher.matches(name)) {
+                if (matcher.matches(name) || matcher.matches(file)) {
                     matches.add(file);
                 }
                 return FileVisitResult.CONTINUE;
