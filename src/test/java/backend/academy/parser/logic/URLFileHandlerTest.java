@@ -1,6 +1,6 @@
 package backend.academy.parser.logic;
 
-import backend.academy.parser.logic.service.URLFileHandler;
+import backend.academy.parser.logic.service.implementations.URLFileHandler;
 import backend.academy.parser.model.Filter;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;

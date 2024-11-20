@@ -1,4 +1,4 @@
-package backend.academy.parser.logic.reports;
+package backend.academy.parser.logic.service.interfaces;
 
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Statistic;

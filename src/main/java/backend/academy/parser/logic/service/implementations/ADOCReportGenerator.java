@@ -1,6 +1,8 @@
-package backend.academy.parser.logic.reports;
+package backend.academy.parser.logic.service.implementations;
 
+import backend.academy.parser.logic.service.interfaces.ReportGenerator;
 import backend.academy.parser.model.Filter;
+import backend.academy.parser.model.HttpStatus;
 import backend.academy.parser.model.Statistic;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.PrintStream;
@@ -76,10 +78,10 @@ public class ADOCReportGenerator extends ReportGenerator {
             |===
             | Код | Имя               | Количество
             """);
-        statistic.statusCodes().forEach((codePhrase, count) ->
-            statusCodesInfo.append("| ").append(codePhrase.getCode()).append(" | ")
-                .append(String.format("%-22s", codePhrase)).append(" | ")
-                .append(String.format("%,d", count)).append("\n"));
+        statistic.statusCodes().forEach((code, count) ->
+            statusCodesInfo.append("| ").append(code).append(" | ")
+                .append(String.format("%-22s", HttpStatus.getHttpStatusCodes().get(code))).append(" | ")
+                .append(String.format("%,d", count)).append(" |\n"));
         statusCodesInfo.append("|===\n\n");
 
         // Дополнительная информация
@@ -103,10 +105,9 @@ public class ADOCReportGenerator extends ReportGenerator {
             * Размеры ответов представлены в байтах
 
             """.formatted(fromDate, uniqueResourcesCount,
-            maxCode != null ? maxCode + " " + maxCode.getCode() : "N/A",
-            minCode != null ? minCode + " " + minCode.getCode() : "N/A");
+            maxCode != null ? HttpStatus.getHttpStatusCodes().get(maxCode) + " " + maxCode : "N/A",
+            minCode != null ? HttpStatus.getHttpStatusCodes().get(minCode) + " " + minCode : "N/A");
 
-        // Выводим полный отчет
         out.println(header + generalInfo + resourcesInfo + statusCodesInfo + additionalInfo);
     }
 

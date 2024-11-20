@@ -1,9 +1,9 @@
 package backend.academy.parser;
 
-import backend.academy.parser.logic.reports.ADOCReportGenerator;
-import backend.academy.parser.logic.reports.MDReportGenerator;
-import backend.academy.parser.logic.service.PathFileHandler;
-import backend.academy.parser.logic.service.URLFileHandler;
+import backend.academy.parser.logic.service.implementations.ADOCReportGeneratorFactory;
+import backend.academy.parser.logic.service.implementations.MDReportGeneratorFactory;
+import backend.academy.parser.logic.service.implementations.PathFileHandlerFactory;
+import backend.academy.parser.logic.service.implementations.URLFileHandlerFactory;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.ReportFormat;
 import com.beust.jcommander.JCommander;
@@ -19,13 +19,15 @@ public class LogAnalyzer {
     private final PrintStream out = new PrintStream(System.out);
 
     public void analyze(String[] args, String currentDirectory) {
-        var filters = acceptCommand(args, currentDirectory);
-        var handler = filters.paths().getFirst().startsWith("http")
-            ? new URLFileHandler(filters) : new PathFileHandler(filters);
+        var filter = acceptCommand(args, currentDirectory);
+        var handlerFactory = filter.paths().getFirst().startsWith("http")
+            ? new URLFileHandlerFactory() : new PathFileHandlerFactory();
+        var handler = handlerFactory.getFileHandler(filter);
         var stats = handler.handleFiles();
-        var reportGenerator = filters.format() == ReportFormat.MARKDOWN || filters.format() == null
-            ? new MDReportGenerator() : new ADOCReportGenerator();
-        reportGenerator.generateReport(filters, stats, out);
+        var reportGeneratorFactory = filter.format() == ReportFormat.MARKDOWN || filter.format() == null
+            ? new MDReportGeneratorFactory() : new ADOCReportGeneratorFactory();
+        var reportGenerator = reportGeneratorFactory.createReportGenerator();
+        reportGenerator.generateReport(filter, stats, out);
     }
 
     public Filter acceptCommand(String[] args, String currentDirectory) {

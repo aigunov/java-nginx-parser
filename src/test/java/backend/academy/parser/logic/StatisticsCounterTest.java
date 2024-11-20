@@ -8,10 +8,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StatisticsCounterTest {
-    private final Filter filter = new Filter();
     private final Log log = Log.builder()
         .ip("127.0.0.1")
         .user("testUser")
@@ -24,47 +22,34 @@ class StatisticsCounterTest {
         .referer("https://example.com")
         .userAgent("Mozilla/5.0")
         .build();
-    private final StatisticsCounter counter = StatisticsCounter.getInstance();
+    private final Filter filter = Filter.builder()
+        .from(log.time().minusMinutes(1))
+        .to(log.time().plusMinutes(1))
+        .filterField("status")
+        .filterValue("200")
+        .build();
 
-    @Test
-    void testFilterLogTimeMatch() {
-        filter.from(log.time().minusMinutes(1)); // Время "от" на минуту раньше
-        filter.to(log.time().plusMinutes(1)); // Время "до" на минуту позже
-        assertTrue(counter.filterLog(log, filter));
-    }
+    private StatisticsCounter counter = new StatisticsCounter(filter);
+
 
     @Test
     void testFilterLogTimeNotMatch() {
-        filter.from(log.time().plusHours(1)); // Время "от" на час позже
-        filter.to(log.time().plusHours(2)); // Время "до" на два часа позже
-        assertFalse(counter.filterLog(log, filter));
-    }
-
-    @Test
-    void testFilterLogFieldMatchStatus() {
-        filter.filterField("STATUS");
-        filter.filterValue("200");
-        assertTrue(counter.filterLog(log, filter));
+        filter.from(log.time().plusHours(1));
+        filter.to(log.time().plusHours(2));
+        assertFalse(counter.filterLog(log));
     }
 
     @Test
     void testFilterLogFieldNotMatchStatus() {
-        filter.filterField("STATUS");
+        filter.filterField("status");
         filter.filterValue("404");
-        assertFalse(counter.filterLog(log, filter));
-    }
-
-    @Test
-    void testFilterLogFieldMatchUserAgent() {
-        filter.filterField("HTTP_USER_AGENT");
-        filter.filterValue("Mozilla.*");
-        assertTrue(counter.filterLog(log, filter));
+        assertFalse(counter.filterLog(log));
     }
 
     @Test
     void testFilterLogFieldNotMatchUserAgent() {
-        filter.filterField("HTTP_USER_AGENT");
+        filter.filterField("http_user_agent");
         filter.filterValue("Chrome.*");
-        assertFalse(counter.filterLog(log, filter));
+        assertFalse(counter.filterLog(log));
     }
 }

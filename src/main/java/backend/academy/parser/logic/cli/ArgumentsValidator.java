@@ -3,12 +3,12 @@ package backend.academy.parser.logic.cli;
 import com.beust.jcommander.IParametersValidator;
 import com.beust.jcommander.ParameterException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings({"MultipleStringLiterals"})
 public class ArgumentsValidator implements IParametersValidator {
-    private static final List<String> FIELDS = List.of(
+    private static final Set<String> FIELDS = Set.of(
         "remote_addr", "remote_user", "time_local", "request", "status", "body_bytes_sent", "http_referer",
         "http_user_agent"
     );

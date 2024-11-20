@@ -1,5 +1,6 @@
-package backend.academy.parser.logic.service;
+package backend.academy.parser.logic.service.implementations;
 
+import backend.academy.parser.logic.service.interfaces.FileHandler;
 import backend.academy.parser.model.Filter;
 import backend.academy.parser.model.Statistic;
 import java.io.IOException;
@@ -24,10 +25,12 @@ import lombok.extern.slf4j.Slf4j;
 @SuppressWarnings({"MultipleStringLiterals"})
 @Slf4j
 public class PathFileHandler extends FileHandler {
-    private final Filter filter;
+    private final static String WINDOWS_REGEX = ".*[\\\\/:*?\"<>|].*";
+    private final static String MAC_REGEX = ".*[:].*";
+    private final static String LINUX_REGEX = ".*[\\/].*";
 
-    public PathFileHandler(Filter filter) {
-        this.filter = filter;
+    public PathFileHandler(final Filter filter) {
+        super(filter);
     }
 
     @Override
@@ -36,7 +39,7 @@ public class PathFileHandler extends FileHandler {
             .flatMap(path -> getPathsToFile(path, filter.domenPath()))
             .flatMap(this::readFileLines)
             .map(parser::parseLine)
-            .filter(log -> counter.filterLog(log, filter))
+            .filter(counter::filterLog)
             .forEach(counter::calculateDataInLog);
 
         return counter.getStatistic();
@@ -51,14 +54,8 @@ public class PathFileHandler extends FileHandler {
         }
     }
 
-    private static boolean containsForbiddenWindowsChars(String filename) {
-        String forbiddenChars = "\\/:*?\"<>|";
-        for (char c : forbiddenChars.toCharArray()) {
-            if (filename.indexOf(c) != -1) {
-                return true;
-            }
-        }
-        return false;
+    private boolean containsForbiddenChars(String filename) {
+        return filename.matches(MAC_REGEX) || filename.matches(LINUX_REGEX) || filename.matches(WINDOWS_REGEX);
     }
 
     private String transformMethod(Path absolutePath, String relative) {
@@ -68,7 +65,7 @@ public class PathFileHandler extends FileHandler {
 
         var relatives = relative.split("\\\\");
         for (int i = 0; i < relatives.length; i++) {
-            if (containsForbiddenWindowsChars(relatives[i])) {
+            if (containsForbiddenChars(relatives[i])) {
                 return currentPath.toString() + "\\"
                     + String.join("\\", Arrays.copyOfRange(relatives, i, relatives.length));
             }

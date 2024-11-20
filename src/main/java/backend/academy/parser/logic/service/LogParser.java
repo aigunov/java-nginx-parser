@@ -10,16 +10,7 @@ import java.util.Locale;
  * Класс Парсер
  */
 public class LogParser {
-    private static LogParser instance = new LogParser();
-
-    private LogParser() {}
-
-    public static synchronized LogParser getInstance() {
-        if (instance == null) {
-            instance = new LogParser();
-        }
-        return instance;
-    }
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z", Locale.ENGLISH);
 
     /**
      * Метод который парсит строку лога
@@ -42,8 +33,6 @@ public class LogParser {
         int bodyBytesSent = Integer.parseInt(statusAndBytes[1]);
         String httpReferer = parts[3];
         String httpUserAgent = parts[5];
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z", Locale.ENGLISH);
         LocalDateTime timeLocal = LocalDateTime.parse(timeLocalStr.substring(1, timeLocalStr.length() - 1), formatter);
 
         return Log.builder()
@@ -61,7 +50,7 @@ public class LogParser {
 
     public static String extractResourceName(String requestLine) {
         if (requestLine == null || requestLine.isEmpty()) {
-            return null; // Обработка пустой строки
+            return null;
         }
         String[] parts = requestLine.split(" ")[1].split("/");
 

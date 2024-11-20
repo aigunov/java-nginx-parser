@@ -1,89 +1,90 @@
 package backend.academy.parser.model;
 
-/**
- * Enum содержащий в себе код-статусы и фразы кодов HTTP
- */
-public enum HttpStatus {
-    // 1xx: Informational
-    CONTINUE(100),
-    SWITCHING_PROTOCOLS(101),
-    PROCESSING(102),
-    EARLY_HINTS(103),
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
-    // 2xx: Success
-    OK(200),
-    CREATED(201),
-    ACCEPTED(202),
-    NON_AUTHORITATIVE_INFORMATION(203),
-    NO_CONTENT(204),
-    RESET_CONTENT(205),
-    PARTIAL_CONTENT(206),
-    MULTI_STATUS(207),
-    ALREADY_REPORTED(208),
-    IM_USED(226),
+@SuppressWarnings({"MagicNumber"})
+public class HttpStatus {
 
-    // 3xx: Redirection
-    MULTIPLE_CHOICES(300),
-    MOVED_PERMANENTLY(301),
-    FOUND(302),
-    SEE_OTHER(303),
-    NOT_MODIFIED(304),
-    USE_PROXY(305),
-    TEMPORARY_REDIRECT(307),
-    PERMANENT_REDIRECT(308),
+    private static final Map<Integer, String> HTTP_STATUS_CODES;
 
-    // 4xx: Client Error
-    BAD_REQUEST(400),
-    UNAUTHORIZED(401),
-    PAYMENT_REQUIRED(402),
-    FORBIDDEN(403),
-    NOT_FOUND(404),
-    METHOD_NOT_ALLOWED(405),
-    NOT_ACCEPTABLE(406),
-    PROXY_AUTHENTICATION_REQUIRED(407),
-    REQUEST_TIMEOUT(408),
-    CONFLICT(409),
-    GONE(410),
-    LENGTH_REQUIRED(411),
-    PRECONDITION_FAILED(412),
-    PAYLOAD_TOO_LARGE(413),
-    URI_TOO_LONG(414),
-    UNSUPPORTED_MEDIA_TYPE(415),
-    RANGE_NOT_SATISFIABLE(416),
-    EXPECTATION_FAILED(417),
-    IM_A_TEAPOT(418),
-    MISDIRECTED_REQUEST(421),
-    UNPROCESSABLE_ENTITY(422),
-    LOCKED(423),
-    FAILED_DEPENDENCY(424),
-    TOO_EARLY(425),
-    UPGRADE_REQUIRED(426),
-    PRECONDITION_REQUIRED(428),
-    TOO_MANY_REQUESTS(429),
-    REQUEST_HEADER_FIELDS_TOO_LARGE(431),
-    UNAVAILABLE_FOR_LEGAL_REASONS(451),
-
-    // 5xx: Server Error
-    INTERNAL_SERVER_ERROR(500),
-    NOT_IMPLEMENTED(501),
-    BAD_GATEWAY(502),
-    SERVICE_UNAVAILABLE(503),
-    GATEWAY_TIMEOUT(504),
-    HTTP_VERSION_NOT_SUPPORTED(505),
-    VARIANT_ALSO_NEGOTIATES(506),
-    INSUFFICIENT_STORAGE(507),
-    LOOP_DETECTED(508),
-    NOT_EXTENDED(510),
-    NETWORK_AUTHENTICATION_REQUIRED(511);
-
-
-    private final int code;
-
-    HttpStatus(int code) {
-        this.code = code;
+    private HttpStatus() {
     }
 
-    public int getCode() {
-        return code;
+    static {
+        Map<Integer, String> statuses = new HashMap<>(84);
+        statuses.put(100, "Continue");
+        statuses.put(101, "Switching Protocols");
+        statuses.put(102, "Processing");
+        statuses.put(103, "Early Hints");
+
+        statuses.put(200, "OK");
+        statuses.put(201, "Created");
+        statuses.put(202, "Accepted");
+        statuses.put(203, "Non-Authoritative Information");
+        statuses.put(204, "No Content");
+        statuses.put(205, "Reset Content");
+        statuses.put(206, "Partial Content");
+        statuses.put(207, "Multi-Status");
+        statuses.put(208, "Already Reported");
+        statuses.put(226, "IM Used");
+
+        statuses.put(300, "Multiple Choices");
+        statuses.put(301, "Moved Permanently");
+        statuses.put(302, "Found");
+        statuses.put(303, "See Other");
+        statuses.put(304, "Not Modified");
+        statuses.put(305, "Use Proxy");
+        statuses.put(307, "Temporary Redirect");
+        statuses.put(308, "Permanent Redirect");
+
+        statuses.put(400, "Bad Request");
+        statuses.put(401, "Unauthorized");
+        statuses.put(402, "Payment Required");
+        statuses.put(403, "Forbidden");
+        statuses.put(404, "Not Found");
+        statuses.put(405, "Method Not Allowed");
+        statuses.put(406, "Not Acceptable");
+        statuses.put(407, "Proxy Authentication Required");
+        statuses.put(408, "Request Timeout");
+        statuses.put(409, "Conflict");
+        statuses.put(410, "Gone");
+        statuses.put(411, "Length Required");
+        statuses.put(412, "Precondition Failed");
+        statuses.put(413, "Payload Too Large");
+        statuses.put(414, "URI Too Long");
+        statuses.put(415, "Unsupported Media Type");
+        statuses.put(416, "Range Not Satisfiable");
+        statuses.put(417, "Expectation Failed");
+        statuses.put(418, "I'm a teapot");
+        statuses.put(421, "Misdirected Request");
+        statuses.put(422, "Unprocessable Entity");
+        statuses.put(423, "Locked");
+        statuses.put(424, "Failed Dependency");
+        statuses.put(425, "Too Early");
+        statuses.put(426, "Upgrade Required");
+        statuses.put(428, "Precondition Required");
+        statuses.put(429, "Too Many Requests");
+        statuses.put(431, "Request Header Fields Too Large");
+        statuses.put(451, "Unavailable For Legal Reasons");
+
+        statuses.put(500, "Internal Server Error");
+        statuses.put(501, "Not Implemented");
+        statuses.put(502, "Bad Gateway");
+        statuses.put(503, "Service Unavailable");
+        statuses.put(504, "Gateway Timeout");
+        statuses.put(505, "HTTP Version Not Supported");
+        statuses.put(506, "Variant Also Negotiates");
+        statuses.put(507, "Insufficient Storage");
+        statuses.put(508, "Loop Detected");
+        statuses.put(510, "Not Extended");
+        statuses.put(511, "Network Authentication Required");
+
+        HTTP_STATUS_CODES = Collections.unmodifiableMap(statuses);
+    }
+
+    public static Map<Integer, String> getHttpStatusCodes() {
+        return HTTP_STATUS_CODES;
     }
 }

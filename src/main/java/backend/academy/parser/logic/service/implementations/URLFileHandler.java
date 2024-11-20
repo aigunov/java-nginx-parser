@@ -1,7 +1,7 @@
-package backend.academy.parser.logic.service;
+package backend.academy.parser.logic.service.implementations;
 
+import backend.academy.parser.logic.service.interfaces.FileHandler;
 import backend.academy.parser.model.Filter;
-import backend.academy.parser.model.HttpStatus;
 import backend.academy.parser.model.Statistic;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.BufferedReader;
@@ -15,16 +15,16 @@ import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 
 @SuppressFBWarnings({"DM_DEFAULT_ENCODING", "OS_OPEN_STREAM"})
+@SuppressWarnings({"MagicNumber"})
 /**
  * Класс ответственный за работу с файлами находящимся на сервере
  */
 @Slf4j
 public class URLFileHandler extends FileHandler {
     private final HttpClient client = HttpClient.newHttpClient();
-    private final Filter filter;
 
-    public URLFileHandler(Filter filter) {
-        this.filter = filter;
+    public URLFileHandler(final Filter filter) {
+        super(filter);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class URLFileHandler extends FileHandler {
         filter.paths().stream()
             .flatMap(this::readFileLines)
             .map(parser::parseLine)
-            .filter(log -> counter.filterLog(log, filter))
+            .filter(counter::filterLog)
             .forEach(counter::calculateDataInLog);
         return counter.getStatistic();
     }
@@ -50,7 +50,7 @@ public class URLFileHandler extends FileHandler {
         try {
             log.info("Послан запрос: {} {}", request.method(), request.uri());
             var response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-            if (!(response.statusCode() == HttpStatus.OK.getCode())) {
+            if (response.statusCode() != 200) {
                 throw new IOException("Файл по URL: " + url + " недоступен.");
             }
             BufferedReader reader = new BufferedReader(new InputStreamReader(response.body()));

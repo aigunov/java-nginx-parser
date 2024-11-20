@@ -17,7 +17,7 @@ import lombok.Builder;
  */
 @Builder(toBuilder = true)
 public record Statistic(int requestCount,
-                        Map<HttpStatus, Integer> statusCodes,
+                        Map<Integer, Integer> statusCodes,
                         Map<String, Integer> resources,
                         double avg,
                         double percent95,
