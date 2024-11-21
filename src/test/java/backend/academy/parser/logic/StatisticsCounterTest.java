@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StatisticsCounterTest {
     private final Log log = Log.builder()
@@ -29,27 +30,55 @@ class StatisticsCounterTest {
         .filterValue("200")
         .build();
 
-    private StatisticsCounter counter = new StatisticsCounter(filter);
 
 
     @Test
+    void testFilterLogTimeMatch() {
+        var counter = new StatisticsCounter(filter);
+        filter.from(log.time().minusMinutes(1));
+        filter.to(log.time().plusMinutes(1));
+        assertTrue(counter.filterLog(log));
+    }
+
+    @Test
     void testFilterLogTimeNotMatch() {
+        var counter = new StatisticsCounter(filter);
         filter.from(log.time().plusHours(1));
         filter.to(log.time().plusHours(2));
         assertFalse(counter.filterLog(log));
     }
 
     @Test
+    void testFilterLogFieldMatchStatus() {
+        var counter = new StatisticsCounter(filter);
+        filter.filterField("status");
+        filter.filterValue("200");
+        assertTrue(counter.filterLog(log));
+    }
+
+    @Test
     void testFilterLogFieldNotMatchStatus() {
+        var counter = new StatisticsCounter(filter);
         filter.filterField("status");
         filter.filterValue("404");
         assertFalse(counter.filterLog(log));
     }
 
     @Test
+    void testFilterLogFieldMatchUserAgent() {
+        var counter = new StatisticsCounter(filter);
+        filter.filterField("http_user_agent");
+        filter.filterValue("Mozilla.*");
+        assertTrue(counter.filterLog(log));
+    }
+
+    @Test
     void testFilterLogFieldNotMatchUserAgent() {
+        var counter = new StatisticsCounter(filter);
         filter.filterField("http_user_agent");
         filter.filterValue("Chrome.*");
         assertFalse(counter.filterLog(log));
     }
 }
+
+

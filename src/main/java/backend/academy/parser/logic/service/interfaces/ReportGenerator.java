@@ -5,6 +5,9 @@ import backend.academy.parser.model.Statistic;
 import java.io.PrintStream;
 import java.time.LocalDateTime;
 
+/**
+ * Абстрактный класс, для работы с генераторами отчетов
+ */
 public abstract class ReportGenerator {
     protected String fromDate;
     protected String toDate;
@@ -15,6 +18,11 @@ public abstract class ReportGenerator {
     protected Double p95ResponseSize;
     protected Double p90ResponseSize;
 
+    /**
+     * Метод подгоняет полученные данные к читаемому виду
+     * @param filter - значения фильтров с которыми был задан поиск
+     * @param statistic - рассчитанные значения статистики
+     */
     protected void extractData(Filter filter, Statistic statistic) {
         fromDate = filter.from() != null && filter.from() != LocalDateTime.MIN ? filter.from().toString() : "-";
         toDate = filter.to() != null && filter.to() != LocalDateTime.MAX ? filter.to().toString() : "-";

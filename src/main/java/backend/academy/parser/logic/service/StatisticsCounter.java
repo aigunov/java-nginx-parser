@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @SuppressWarnings({"MagicNumber"})
 @SuppressFBWarnings({"RFI_SET_ACCESSIBLE"})
 /**
+ * @author aigunov
  * Класс ответственный за подсчет статистики в файле
  */
 @Getter
